@@ -20,22 +20,23 @@
 using namespace Windows::Networking::Sockets;
 
 
-BTSock::BTSock() : 
+BTSockListener::BTSockListener() :
 	serviceId(RfcommServiceId::ObexObjectPush()),
 	serviceProvider(RfcommServiceProvider::CreateAsync(serviceId).get())
 {
 
 }
 
-BTSock::BTSock(uint16_t id) : 
+BTSockListener::BTSockListener(uint16_t id) :
 	serviceId(RfcommServiceId::FromShortId(id)),
 	serviceProvider(RfcommServiceProvider::CreateAsync(serviceId).get())
 {
 
 }
 
-IAsyncAction BTSock::OnConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args) {
-	sock = args.Socket();
+IAsyncAction BTSockListener::OnConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args) {
+	StreamSocket sock = args.Socket();
+	socks_queue.push(sock);
 
 	std::wcout << "Conection: \n";
 	std::wcout << sock.Information().RemoteHostName().ToString().c_str() << '\n';
@@ -45,12 +46,13 @@ IAsyncAction BTSock::OnConnectionReceived(StreamSocketListener sender, StreamSoc
 	return 0;
 }
 
-void BTSock::bind() {
-	ssl.ConnectionReceived({ this, &BTSock::OnConnectionReceived });
+void BTSockListener::bind() {
+	ssl.ConnectionReceived({ this, &BTSockListener::OnConnectionReceived });
 	ssl.BindServiceNameAsync(serviceId.AsString(), SocketProtectionLevel::BluetoothEncryptionAllowNullAuthentication).get();
-
+	
 	serviceProvider.StartAdvertising(ssl, true);
 }
+
 
 #endif // WIN32
 

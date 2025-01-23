@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include <queue>
 
 #ifdef WIN32
 #include <winrt/Windows.Devices.Bluetooth.h>
@@ -12,20 +12,29 @@ using namespace Windows::Devices::Bluetooth::Rfcomm;
 using namespace Windows::Networking::Sockets;
 #endif // WIN32
 
-
 class BTSock {
+#ifdef WIN32W
+	StreamSocket sock;
+
+#endif // WIN32
+public:
+};
+
+class BTSockListener {
 #ifdef WIN32
 	RfcommServiceId serviceId;
 	RfcommServiceProvider serviceProvider;
 	StreamSocketListener ssl;
-	StreamSocket sock;
+	std::queue<StreamSocket> socks_queue;
 
 	IAsyncAction OnConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args);
 #endif // WIN32
 public:
-	BTSock();
-	BTSock(uint16_t id);
+	BTSockListener();
+	BTSockListener(uint16_t id);
 
 	void bind();
+
+	bool accept();
 };
 

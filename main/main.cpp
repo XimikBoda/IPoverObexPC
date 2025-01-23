@@ -2,7 +2,7 @@
 #include "bt.h"
 
 int main() {
-	BTSock btsock;
+	BTSockListener btsock;
 	btsock.bind();
 	char c;
 	std::cin >> c;
