@@ -1,5 +1,6 @@
 #pragma once
 #include <queue>
+#include "BTSock.h"
 
 #ifdef WIN32
 #include <winrt/Windows.Devices.Bluetooth.h>
@@ -12,13 +13,6 @@ using namespace Windows::Devices::Bluetooth::Rfcomm;
 using namespace Windows::Networking::Sockets;
 #endif // WIN32
 
-class BTSock {
-#ifdef WIN32W
-	StreamSocket sock;
-
-#endif // WIN32
-public:
-};
 
 class BTSockListener {
 #ifdef WIN32

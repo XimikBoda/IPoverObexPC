@@ -18,4 +18,4 @@ set(SFML_BUILD_WINDOW FALSE)
 add_subdirectory(SFML) 
 
 add_subdirectory(main)
-add_subdirectory(bt)
+add_subdirectory(BT)

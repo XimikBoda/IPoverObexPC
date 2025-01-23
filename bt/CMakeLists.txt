@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required (VERSION 3.8)
 
-set(PROJECT_NAME "BTSock")
+set(PROJECT_NAME "BT")
 
 add_library(${PROJECT_NAME} STATIC 
     BTSock.h BTSock_Windows.cpp
