@@ -30,9 +30,8 @@ class BTSockListener {
 #endif // WIN32
 public:
 	BTSockListener();
-	BTSockListener(uint16_t id);
 
-	void bind();
+	void bind(uint16_t id);
 
 	bool accept(BTSock &btsock, bool block = false);
 
