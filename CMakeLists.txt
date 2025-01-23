@@ -17,4 +17,5 @@ set(SFML_BUILD_GRAPHICS FALSE)
 set(SFML_BUILD_WINDOW FALSE)
 add_subdirectory(SFML) 
 
-add_subdirectory (main)
+add_subdirectory(main)
+add_subdirectory(bt)
