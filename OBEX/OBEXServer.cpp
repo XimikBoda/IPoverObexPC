@@ -17,6 +17,9 @@ void OBEXServer::readPacket() {
 	case OBEX_Operations::Put:
 		readPutPacket();
 		break;
+	case OBEX_Operations::Disconnect:
+		readDisconnectPacket();
+		break;
 	}
 }
 
@@ -34,8 +37,23 @@ void OBEXServer::readConnectPacket() {
 void OBEXServer::readPutPacket() {
 	readHeaders();
 
-	makeConnectSuccessResponse();
-	state = GettingFile;
+	bool is_final = (current_pack >> 7) & 1;
+	if (is_final) {
+		makePutFinalResponse();
+		state = Connected;
+	}
+	else {
+		makePutContinueResponse();
+		state = GettingFile;
+	}
+}
+
+void OBEXServer::readDisconnectPacket() {
+	readHeaders();
+
+	makeDisconnectSuccessResponse();
+
+	state = Disconected;
 }
 
 void OBEXServer::readHeaders() {
@@ -50,12 +68,12 @@ void OBEXServer::readHeader() {
 
 	switch (headerType) {
 	case TextH: {
-		uint16_t size = reader.readUInt16();
+		uint16_t size = reader.readUInt16() - 3;
 		vec str_buf = reader.readVecBlocking(size);
 		break;
 	}
 	case BytesH: {
-		uint16_t size = reader.readUInt16();
+		uint16_t size = reader.readUInt16() - 3;
 		vec buf = reader.readVecBlocking(size);
 		break;
 	}
@@ -84,6 +102,16 @@ void OBEXServer::makePutContinueResponse() {
 	out_pack.send(writer);
 }
 
+void OBEXServer::makePutFinalResponse() {
+	out_pack.init(Success);
+	out_pack.send(writer);
+}
+
+void OBEXServer::makeDisconnectSuccessResponse() {
+	out_pack.init(Success);
+	out_pack.send(writer);
+}
+
 void OBEXServer::skipPacketToEnd() {
 	reader.skipToEnd(current_pack_size);
 	current_pack = 0;
@@ -91,7 +119,7 @@ void OBEXServer::skipPacketToEnd() {
 
 void OBEXServer::run()
 {
-	while (1) {
+	while (state != Disconected) {
 		getPacketType();
 		readPacket();
 	}

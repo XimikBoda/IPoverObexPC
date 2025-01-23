@@ -7,7 +7,8 @@
 enum OBEXServerStates {
 	Inited,
 	Connected,
-	GettingFile
+	GettingFile,
+	Disconected
 };
 
 class OBEXServer {
@@ -27,13 +28,15 @@ class OBEXServer {
 
 	void readConnectPacket();
 	void readPutPacket();
+	void readDisconnectPacket();
 
 	void readHeaders();
 	void readHeader();
 
 	void makeConnectSuccessResponse();
-
 	void makePutContinueResponse();
+	void makePutFinalResponse();
+	void makeDisconnectSuccessResponse();
 
 	void skipPacketToEnd();
 

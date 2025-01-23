@@ -25,9 +25,10 @@ enum OBEX_Responses {
 };
 
 enum OBEX_Headers {
-	Name	= 0x01,
-	Length	= 0xC3,
-	Body	= 0x48,
+	Name		= 0x01,
+	Length		= 0xC3,
+	Body		= 0x48,
+	EndofBody	= 0x49
 };
 
 enum OBEX_HeadersTypes {
