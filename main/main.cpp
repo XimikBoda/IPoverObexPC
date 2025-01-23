@@ -13,6 +13,7 @@ int main() {
 	ReaderFromFunc reader([=, &btsocks](size_t len, bool partial){return btsocks.read(len); });
 	OBEXServer OBEXs;
 	OBEXs.reader = reader;
+	OBEXs.writer = [=, &btsocks](vec len) { btsocks.write(len); };
 	OBEXs.run();
 
 	//BTSock btsockc;

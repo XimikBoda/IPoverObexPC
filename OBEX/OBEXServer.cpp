@@ -21,10 +21,20 @@ void OBEXServer::readConnectPacket() {
 	flags = reader.readUInt8();
 	max_pack_size = reader.readUInt16();
 
+	makeConnectResponse();
+
 	skipPacketToEnd();
 }
 
-void OBEXServer::skipPacketToEnd(){
+void OBEXServer::makeConnectResponse() {
+	out_pack.init(Success);
+	out_pack.putUInt8(version);
+	out_pack.putUInt8(0x00);
+	out_pack.putUInt16(max_pack_size);
+	out_pack.send(writer);
+}
+
+void OBEXServer::skipPacketToEnd() {
 	reader.skipToEnd(current_pack_size);
 	current_pack = 0;
 }
