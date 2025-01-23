@@ -19,20 +19,15 @@
 
 using namespace Windows::Networking::Sockets;
 
-
 BTSockListener::BTSockListener() :
 	serviceId(RfcommServiceId::ObexObjectPush()),
 	serviceProvider(RfcommServiceProvider::CreateAsync(serviceId).get())
-{
-
-}
+{}
 
 BTSockListener::BTSockListener(uint16_t id) :
 	serviceId(RfcommServiceId::FromShortId(id)),
 	serviceProvider(RfcommServiceProvider::CreateAsync(serviceId).get())
-{
-
-}
+{}
 
 IAsyncAction BTSockListener::OnConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args) {
 	StreamSocket sock = args.Socket();
@@ -43,9 +38,11 @@ IAsyncAction BTSockListener::OnConnectionReceived(StreamSocketListener sender, S
 	socks_queue_cv.notify_one();
 
 	std::wcout << "Conection: \n";
+	std::wcout << sock.Information().RemoteAddress().ToString().c_str() << '\n';
 	std::wcout << sock.Information().RemoteHostName().ToString().c_str() << '\n';
 
 	auto bdevice = BluetoothDevice::FromHostNameAsync(sock.Information().RemoteHostName()).get();
+	auto addr = bdevice.BluetoothAddress();
 	std::wcout << bdevice.Name().c_str() << '\n';
 	return 0;
 }
@@ -68,7 +65,7 @@ bool BTSockListener::accept(BTSock& btsock, bool block) {
 			return false;
 	{
 		std::lock_guard lg(socks_queue_mutex);
-		btsock.setSock(socks_queue.front());
+		btsock = BTSock(socks_queue.front());
 		socks_queue.pop();
 	}
 	return true;

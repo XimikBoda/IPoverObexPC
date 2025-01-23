@@ -19,8 +19,30 @@
 
 using namespace Windows::Networking::Sockets;
 
-void BTSock::setSock(StreamSocket& sock) {
+BluetoothDevice GetBluetoothDeviceFromSocket(const StreamSocket& sock) {
+	return BluetoothDevice::FromHostNameAsync(sock.Information().RemoteAddress()).get();
+}
+
+BTSock::BTSock(): device(BluetoothDevice::FromBluetoothAddressAsync(0).get()){
+}
+
+BTSock::BTSock(StreamSocket& sock): device(GetBluetoothDeviceFromSocket(sock)){
 	this->sock = sock;
+}
+
+bool BTSock::connect(uint16_t id, BTAddress addr)
+{
+	RfcommServiceId serviceId = RfcommServiceId::FromShortId(id);
+	device = BluetoothDevice::FromBluetoothAddressAsync(addr.toUInt64()).get();
+	if(!device)
+		return false;
+
+	auto rfcommServiceResult = device.GetRfcommServicesForIdAsync(serviceId).get();
+	if (!rfcommServiceResult.Services().Size())
+		return false;
+
+	auto rfcommService = rfcommServiceResult.Services().GetAt(0);
+	sock.ConnectAsync(rfcommService.ConnectionHostName(), rfcommService.ConnectionServiceName()).get();
 }
 
 #endif // WIN32

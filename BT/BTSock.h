@@ -1,5 +1,6 @@
 #pragma once
 #include <queue>
+#include "BTAddress.h"
 
 #ifdef WIN32
 #include <winrt/Windows.Devices.Bluetooth.h>
@@ -15,9 +16,16 @@ using namespace Windows::Networking::Sockets;
 class BTSock {
 #ifdef WIN32
 	StreamSocket sock;
-
+	BluetoothDevice device;
+	//RfcommDeviceService deviceService;
 #endif // WIN32
 public:
-	void setSock(StreamSocket &sock);
+	BTSock();
+
+#ifdef WIN32
+	BTSock(StreamSocket& sock);
+#endif // WIN32
+
+	bool connect(uint16_t id, BTAddress addr);
 };
 
