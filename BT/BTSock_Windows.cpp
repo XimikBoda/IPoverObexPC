@@ -19,6 +19,9 @@
 
 using namespace Windows::Networking::Sockets;
 
+void BTSock::setSock(StreamSocket& sock) {
+	this->sock = sock;
+}
 
 #endif // WIN32
 

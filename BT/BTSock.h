@@ -13,10 +13,11 @@ using namespace Windows::Networking::Sockets;
 #endif // WIN32
 
 class BTSock {
-#ifdef WIN32W
+#ifdef WIN32
 	StreamSocket sock;
 
 #endif // WIN32
 public:
+	void setSock(StreamSocket &sock);
 };
 

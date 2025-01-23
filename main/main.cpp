@@ -2,8 +2,10 @@
 #include <BTSockListener.h>
 
 int main() {
-	BTSockListener btsock;
-	btsock.bind();
+	BTSock btsock;
+	BTSockListener btsockl;
+	btsockl.bind();
+	btsockl.accept(btsock, true);
 	char c;
 	std::cin >> c;
 }

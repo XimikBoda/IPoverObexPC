@@ -1,5 +1,7 @@
 #pragma once
 #include <queue>
+#include <mutex>
+#include <condition_variable>
 #include "BTSock.h"
 
 #ifdef WIN32
@@ -19,6 +21,9 @@ class BTSockListener {
 	RfcommServiceId serviceId;
 	RfcommServiceProvider serviceProvider;
 	StreamSocketListener ssl;
+
+	std::mutex socks_queue_mutex;
+	std::condition_variable socks_queue_cv;
 	std::queue<StreamSocket> socks_queue;
 
 	IAsyncAction OnConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args);
@@ -29,6 +34,6 @@ public:
 
 	void bind();
 
-	bool accept();
+	bool accept(BTSock &btsock, bool block = false);
 };
 

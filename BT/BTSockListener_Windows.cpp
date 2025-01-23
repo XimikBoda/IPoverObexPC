@@ -36,7 +36,11 @@ BTSockListener::BTSockListener(uint16_t id) :
 
 IAsyncAction BTSockListener::OnConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args) {
 	StreamSocket sock = args.Socket();
-	socks_queue.push(sock);
+	{
+		std::lock_guard lg(socks_queue_mutex);
+		socks_queue.push(sock);
+	}
+	socks_queue_cv.notify_one();
 
 	std::wcout << "Conection: \n";
 	std::wcout << sock.Information().RemoteHostName().ToString().c_str() << '\n';
@@ -53,6 +57,22 @@ void BTSockListener::bind() {
 	serviceProvider.StartAdvertising(ssl, true);
 }
 
+bool BTSockListener::accept(BTSock& btsock, bool block) {
+	if (socks_queue.empty())
+		if (block) {
+			std::mutex socks_queue_cv_mutex;
+			std::unique_lock lk(socks_queue_cv_mutex);
+			socks_queue_cv.wait(lk, [=]{ return !socks_queue.empty(); });
+		}
+		else
+			return false;
+	{
+		std::lock_guard lg(socks_queue_mutex);
+		btsock.setSock(socks_queue.front());
+		socks_queue.pop();
+	}
+	return true;
+}
 
 #endif // WIN32
 
