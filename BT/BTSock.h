@@ -35,6 +35,7 @@ public:
 	BTAddress getRemoteAddress();
 
 	size_t read(void* buf, size_t len);
+	std::vector<uint8_t> read(size_t len);
 	size_t write(void* buf, size_t len);
 	size_t write(std::vector<uint8_t> buf);
 };

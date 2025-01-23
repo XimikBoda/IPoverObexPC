@@ -71,6 +71,16 @@ size_t BTSock::read(void* buf, size_t len)
 	return size_t(readed.Length());
 }
 
+std::vector<uint8_t> BTSock::read(size_t len)
+{
+	if (len == 0)
+		return {};
+	std::vector<uint8_t> res;
+	res.resize(len);
+	read(res.data(), len);;
+	return res;
+}
+
 size_t BTSock::write(void* buf, size_t len)
 {
 	if (!len)
