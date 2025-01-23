@@ -19,3 +19,4 @@ add_subdirectory(SFML)
 
 add_subdirectory(main)
 add_subdirectory(BT)
+add_subdirectory(OBEX)
