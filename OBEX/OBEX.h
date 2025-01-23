@@ -23,3 +23,17 @@ enum OBEX_Responses {
 	ResetContent				= 0xA5,
 	PartialContent				= 0xA6
 };
+
+enum OBEX_Headers {
+	Name	= 0x01,
+	Length	= 0xC3,
+	Body	= 0x48,
+};
+
+enum OBEX_HeadersTypes {
+	TextH	= 0b00,
+	BytesH	= 0b01,
+	ByteH	= 0b10,
+	IntH	= 0b11
+};
+

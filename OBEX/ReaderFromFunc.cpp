@@ -20,6 +20,11 @@ uint16_t ReaderFromFunc::readUInt16() {
 	return (buf[0] << 8) | buf[1];
 }
 
+uint32_t ReaderFromFunc::readUInt32() {
+	auto buf = readVecBlocking(4);
+	return (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3];
+}
+
 void ReaderFromFunc::skipToEnd(size_t pack_len) {
 	if (read_count >= pack_len)
 		return;
