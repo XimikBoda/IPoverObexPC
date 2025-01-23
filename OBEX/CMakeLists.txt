@@ -6,6 +6,7 @@ add_library(${PROJECT_NAME} STATIC
     OBEX.h
     OBEXServer.h OBEXServer.cpp
     OBEXClient.h OBEXClient.cpp
+    ReaderFromFunc.h ReaderFromFunc.cpp
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
