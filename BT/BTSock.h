@@ -17,7 +17,6 @@ class BTSock {
 #ifdef WIN32
 	StreamSocket sock;
 	BluetoothDevice device;
-	//RfcommDeviceService deviceService;
 #endif // WIN32
 public:
 	BTSock();
@@ -27,5 +26,7 @@ public:
 #endif // WIN32
 
 	bool connect(uint16_t id, BTAddress addr);
+
+	BTAddress getRemoteAddress();
 };
 

@@ -45,5 +45,10 @@ bool BTSock::connect(uint16_t id, BTAddress addr)
 	sock.ConnectAsync(rfcommService.ConnectionHostName(), rfcommService.ConnectionServiceName()).get();
 }
 
+BTAddress BTSock::getRemoteAddress()
+{
+	return BTAddress(device.BluetoothAddress());
+}
+
 #endif // WIN32
 

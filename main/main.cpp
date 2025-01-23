@@ -2,10 +2,14 @@
 #include <BTSockListener.h>
 
 int main() {
-	BTSock btsock;
+	BTSock btsocks;
 	BTSockListener btsockl;
 	btsockl.bind();
-	btsockl.accept(btsock, true);
+	btsockl.accept(btsocks, true);
+
+	BTSock btsockc;
+	btsockc.connect(btsockl.getShortId(), btsocks.getRemoteAddress());
+
 	char c;
 	std::cin >> c;
 }

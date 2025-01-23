@@ -35,5 +35,7 @@ public:
 	void bind();
 
 	bool accept(BTSock &btsock, bool block = false);
+
+	uint16_t getShortId();
 };
 

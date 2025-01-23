@@ -71,5 +71,10 @@ bool BTSockListener::accept(BTSock& btsock, bool block) {
 	return true;
 }
 
+uint16_t BTSockListener::getShortId()
+{
+	return serviceId.AsShortId();
+}
+
 #endif // WIN32
 
