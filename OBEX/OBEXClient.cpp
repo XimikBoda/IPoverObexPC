@@ -69,3 +69,8 @@ void OBEXClient::skipPacketToEnd() {
 	reader.skipToEnd(current_response_pack_size);
 	current_response_pack = 0;
 }
+
+void OBEXClient::connet() {
+	makeConnectPacket();
+	readResponsePacket();
+}

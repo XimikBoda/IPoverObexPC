@@ -2,13 +2,8 @@
 #include <vector>
 #include "ReaderFromFunc.h"
 #include "OBEXMakePacket.h"
+#include "OBEX.h"
 
-enum OBEXClientStates {
-	Inited,
-	Connected,
-	SendingFile,
-	Disconected
-};
 
 class OBEXClient {
 	uint8_t last_pack = 0;

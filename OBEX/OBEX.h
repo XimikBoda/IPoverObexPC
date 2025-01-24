@@ -38,3 +38,10 @@ enum OBEX_HeadersTypes {
 	IntH	= 0b11
 };
 
+enum OBEX_States { // This is not from the specification
+	Inited,
+	Connected,
+	SendingFile,
+	GettingFile,
+	Disconected
+};

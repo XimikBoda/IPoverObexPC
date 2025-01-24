@@ -35,6 +35,7 @@ BTSock::BTSock(StreamSocket& sock):
 	writer(sock.OutputStream()), reader(sock.InputStream()) 
 {
 	this->sock = sock;
+	reader.InputStreamOptions(InputStreamOptions::ReadAhead);
 }
 
 bool BTSock::connect(uint16_t id, BTAddress addr)
@@ -49,10 +50,11 @@ bool BTSock::connect(uint16_t id, BTAddress addr)
 		return false;
 
 	auto rfcommService = rfcommServiceResult.Services().GetAt(0);
-	sock.ConnectAsync(rfcommService.ConnectionHostName(), rfcommService.ConnectionServiceName()).get();
-	writer = DataWriter(sock.OutputStream());
-	reader = DataReader(sock.InputStream());
-	reader.InputStreamOptions(InputStreamOptions::ReadAhead);
+
+	StreamSocket sock;
+	sock.ConnectAsync(rfcommService.ConnectionHostName(), rfcommService.ConnectionServiceName(), SocketProtectionLevel::BluetoothEncryptionAllowNullAuthentication).get();
+
+	*this = BTSock(sock);
 }
 
 BTAddress BTSock::getRemoteAddress()

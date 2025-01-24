@@ -2,14 +2,8 @@
 #include <vector>
 #include "ReaderFromFunc.h"
 #include "OBEXMakePacket.h"
+#include "OBEX.h"
 
-
-enum OBEXServerStates {
-	Inited,
-	Connected,
-	GettingFile,
-	Disconected
-};
 
 class OBEXServer {
 	uint8_t current_pack = 0;
@@ -19,7 +13,7 @@ class OBEXServer {
 	uint8_t flags = 0;
 	uint16_t max_pack_size = 0xFFFF;
 
-	OBEXServerStates state = Inited;
+	OBEX_States state = Inited;
 
 	OBEXMakePacket out_pack;
 

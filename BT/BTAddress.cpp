@@ -17,7 +17,7 @@ uint64_t BTAddress::toUInt64(){
 }
 
 std::string BTAddress::toString(){
-	char str[MAC_LEN * 3] = {};
+	char str[MAC_LEN * 3 + 2] = {};
 	for (int i = 0; i < MAC_LEN; ++i)
 		sprintf(str + i * 3, "%02X:", mac[i]);
 	str[MAC_LEN * 3 - 1] = 0;
