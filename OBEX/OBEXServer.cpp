@@ -20,6 +20,9 @@ void OBEXServer::readPacket() {
 	case OBEX_Operations::Disconnect:
 		readDisconnectPacket();
 		break;
+	default:
+		skipPacketToEnd();
+		break;
 	}
 }
 
@@ -27,11 +30,10 @@ void OBEXServer::readConnectPacket() {
 	version = reader.readUInt8();
 	flags = reader.readUInt8();
 	max_pack_size = reader.readUInt16();
+	readHeaders();
 
 	makeConnectSuccessResponse();
 	state = Connected;
-
-	readHeaders();
 }
 
 void OBEXServer::readPutPacket() {
