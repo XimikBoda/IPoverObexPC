@@ -1,12 +1,58 @@
 #include "OBEXClient.h"
 #include "OBEX.h"
 
+#define NO_HI(x) ((x) & 0b01111111)
+
 void OBEXClient::makeConnectPacket() {
 	out_pack.init(last_pack = Connect);
 	out_pack.putUInt8(0x10);
 	out_pack.putUInt8(0x00);
 	out_pack.putUInt16(max_pack_size);
 	out_pack.send(writer);
+}
+
+void OBEXClient::makeFistPutPacket(std::string name, uint32_t size) {
+	last_pack = Put;
+	out_pack.init(NO_HI(Put));
+	makeTextHeader(Name, name);
+	makeIntHeader(Length, size);
+	out_pack.send(writer);
+}
+
+void OBEXClient::makePutPacket(vec buf) {
+	last_pack = Put;
+	out_pack.init(NO_HI(Put));
+	makeBytesHeader(Body, buf);
+	out_pack.send(writer);
+}
+
+void OBEXClient::makePutPacketAndResponce(vec buf) {
+	makePutPacket(buf);
+	readResponsePacket();
+}
+
+void OBEXClient::makeTextHeader(uint8_t hid, std::string text) {
+	out_pack.putUInt8(hid);
+	out_pack.putUInt16(3 + text.size() * 2 + 2);
+	for (int i = 0; i < text.size(); ++i)
+		out_pack.putUInt16(text[i]);
+	out_pack.putUInt16(0);
+}
+
+void OBEXClient::makeBytesHeader(uint8_t hid, vec buf) {
+	out_pack.putUInt8(hid);
+	out_pack.putUInt16(3 + buf.size());
+	out_pack.putBuf(buf);
+}
+
+void OBEXClient::makeByteHeader(uint8_t hid, uint8_t val) {
+	out_pack.putUInt8(hid);
+	out_pack.putUInt8(val);
+}
+
+void OBEXClient::makeIntHeader(uint8_t hid, uint32_t val) {
+	out_pack.putUInt8(hid);
+	out_pack.putUInt32(val);
 }
 
 void OBEXClient::readResponsePacket() {
@@ -73,4 +119,19 @@ void OBEXClient::skipPacketToEnd() {
 void OBEXClient::connet() {
 	makeConnectPacket();
 	readResponsePacket();
+}
+
+void OBEXClient::initPutStream(std::string name, uint32_t size) {
+	makeFistPutPacket(name, size);
+	readResponsePacket();
+}
+
+void OBEXClient::PutStreamData(vec buf) {
+	size_t max_buf_size = max_pack_size - 6;
+	int count = buf.size() / max_buf_size;
+	for (int i = 0; i < count; ++i)
+		makePutPacketAndResponce(vec(buf.begin() + i * max_buf_size, buf.begin() + (i + 1) * max_buf_size));
+
+	if (buf.size() % max_buf_size != 0)
+		makePutPacketAndResponce(vec(buf.begin() + count * max_buf_size, buf.end()));
 }

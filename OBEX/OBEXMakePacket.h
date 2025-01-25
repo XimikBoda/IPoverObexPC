@@ -15,6 +15,7 @@ public:
 	void putBuf(const vec &buf);
 	void putUInt8(uint8_t val);
 	void putUInt16(uint16_t val);
+	void putUInt32(uint32_t val);
 
 	void send(WriteFunc writer);
 };

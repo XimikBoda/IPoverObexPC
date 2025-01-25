@@ -32,6 +32,11 @@ void OBEXMakePacket::putUInt16(uint16_t val) {
 	putBuf({ val8[1], val8[0] });
 }
 
+void OBEXMakePacket::putUInt32(uint32_t val) {
+	uint8_t* val8 = (uint8_t*)&val;
+	putBuf({ val8[3], val8[2], val8[1], val8[0] });
+}
+
 void OBEXMakePacket::send(WriteFunc writer) {
 	update_size();
 	writer(buf);
