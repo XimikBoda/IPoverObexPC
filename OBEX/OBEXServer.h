@@ -27,6 +27,8 @@ class OBEXServer {
 	void readHeaders();
 	void readHeader();
 
+	void readStream();
+
 	void makeConnectSuccessResponse();
 	void makePutContinueResponse();
 	void makePutFinalResponse();
@@ -37,6 +39,7 @@ class OBEXServer {
 public:
 	ReaderFromFunc reader;
 	WriteFunc writer;
+	WriteFunc stream_writer;
 
 	void run();
 };

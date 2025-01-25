@@ -68,27 +68,36 @@ void OBEXServer::readHeader() {
 	uint8_t header_id = reader.readUInt8();
 	uint8_t headerType = ((header_id >> 6) & 0b11);
 
-	switch (headerType) {
-	case TextH: {
-		uint16_t size = reader.readUInt16() - 3;
-		vec str_buf = reader.readVecBlocking(size);
-		break;
-	}
-	case BytesH: {
-		uint16_t size = reader.readUInt16() - 3;
-		vec buf = reader.readVecBlocking(size);
-		break;
-	}
-	case ByteH: {
-		uint8_t byte = reader.readUInt8();
-		break;
-	}
-	case IntH: {
-		uint32_t val = reader.readUInt32();
-		break;
-	}
+	if (header_id == Body || header_id == EndofBody)
+		readStream();
+	else
+		switch (headerType) {
+		case TextH: {
+			uint16_t size = reader.readUInt16() - 3;
+			vec str_buf = reader.readVecBlocking(size);
+			break;
+		}
+		case BytesH: {
+			uint16_t size = reader.readUInt16() - 3;
+			vec buf = reader.readVecBlocking(size);
+			break;
+		}
+		case ByteH: {
+			uint8_t byte = reader.readUInt8();
+			break;
+		}
+		case IntH: {
+			uint32_t val = reader.readUInt32();
+			break;
+		}
 
-	}
+		}
+}
+
+void OBEXServer::readStream() {
+	uint16_t size = reader.readUInt16() - 3;
+	vec buf = reader.readVecBlocking(size);
+	stream_writer(buf);
 }
 
 void OBEXServer::makeConnectSuccessResponse() {
