@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <functional>
+#include <cstdint>
+#include <cstring>
 
 typedef std::vector<uint8_t> vec;
 typedef std::function<void(vec)> WriteFunc;
