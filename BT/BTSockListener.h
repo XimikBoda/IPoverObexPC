@@ -1,10 +1,10 @@
 #pragma once
-#include <queue>
-#include <mutex>
-#include <condition_variable>
 #include "BTSock.h"
 
 #ifdef WIN32
+#include <queue>
+#include <mutex>
+#include <condition_variable>
 #include <winrt/Windows.Devices.Bluetooth.h>
 #include <winrt/Windows.Networking.Sockets.h>
 
@@ -13,7 +13,8 @@ using namespace Windows::Foundation;
 using namespace Windows::Devices::Bluetooth;
 using namespace Windows::Devices::Bluetooth::Rfcomm;
 using namespace Windows::Networking::Sockets;
-#endif // WIN32
+#elif __unix__
+#endif 
 
 
 class BTSockListener {
@@ -27,9 +28,13 @@ class BTSockListener {
 	std::queue<StreamSocket> socks_queue;
 
 	IAsyncAction OnConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args);
-#endif // WIN32
+#elif __unix__
+	int server_fd;
+    uint16_t serviceId;
+#endif 
 public:
 	BTSockListener();
+    ~BTSockListener();
 
 	void bind(uint16_t id);
 

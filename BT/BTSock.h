@@ -13,7 +13,10 @@ using namespace Windows::Devices::Bluetooth;
 using namespace Windows::Devices::Bluetooth::Rfcomm;
 using namespace Windows::Networking::Sockets;
 using namespace Windows::Storage::Streams;
-#endif // WIN32
+#elif __unix__
+#include <bluetooth/bluetooth.h>
+uint8_t find_server_rfcomm_channel(uint16_t service_uuid, const bdaddr_t &addr);
+#endif
 
 class BTSock {
 #ifdef WIN32
@@ -22,13 +25,19 @@ class BTSock {
 
 	DataWriter writer;
 	DataReader reader;
-#endif // WIN32
+#elif __unix__
+	int socket_fd = -1;
+    BTAddress remote_addr;
+#endif 
 public:
 	BTSock();
 
 #ifdef WIN32
 	BTSock(StreamSocket& sock);
-#endif // WIN32
+#elif __unix__
+	BTSock(int socket_fd, const BTAddress& addr);
+	~BTSock();
+#endif 
 
 	bool connect(uint16_t id, BTAddress addr);
 

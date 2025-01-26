@@ -3,8 +3,8 @@
 set(PROJECT_NAME "BT")
 
 add_library(${PROJECT_NAME} STATIC 
-    BTSock.h BTSock_Windows.cpp
-	BTSockListener.h BTSockListener_Windows.cpp
+    BTSock.h BTSock_Windows.cpp BTSock_Linux.cpp
+	BTSockListener.h BTSockListener_Windows.cpp BTSockListener_Linux.cpp
 	BTAddress.h BTAddress.cpp
 )
 
@@ -14,6 +14,10 @@ endif()
 
 if(WIN32)
 	target_link_libraries(${PROJECT_NAME} windowsapp)
+elseif(UNIX)
+	target_link_libraries(${PROJECT_NAME} -l:libbluetooth.a)
+	set(CMAKE_CXX_FLAGS "-fpermissive")
 endif()
+
 
 target_include_directories(${PROJECT_NAME} PUBLIC ".")

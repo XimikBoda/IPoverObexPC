@@ -34,3 +34,16 @@ void BTAddress::fromArray(uint8_t mac[MAC_LEN]){
 	for (int i = 0; i < MAC_LEN; ++i)
 		this->mac[i] = mac[i];
 }
+
+#ifdef __unix__
+	BTAddress::BTAddress(bdaddr_t adr) {
+		from_bdaddr(adr);
+	}
+
+	bdaddr_t BTAddress::to_bdaddr() {
+		return *(bdaddr_t*)&mac;
+	}
+	void BTAddress::from_bdaddr(bdaddr_t adr) {
+		*(bdaddr_t*)&mac = adr;
+	}
+#endif 
