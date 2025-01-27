@@ -8,10 +8,21 @@ endif()
 
 project ("IPoverObexPC")
 
+set(BUILD_SHARED_LIBS FALSE)
+
+if(UNIX)
+  include(FetchContent)
+  FetchContent_Declare(sdbus-c++
+          GIT_REPOSITORY https://github.com/Kistler-Group/sdbus-cpp.git
+          GIT_TAG        master
+  )
+  set(BUILD_EXAMPLES OFF)
+  FetchContent_MakeAvailable(sdbus-c++)
+endif()
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 # Include sub-projects.
-set(BUILD_SHARED_LIBS FALSE)
 set(SFML_BUILD_AUDIO FALSE)
 set(SFML_BUILD_GRAPHICS FALSE)
 set(SFML_BUILD_WINDOW FALSE)

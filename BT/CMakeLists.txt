@@ -15,7 +15,7 @@ endif()
 if(WIN32)
 	target_link_libraries(${PROJECT_NAME} windowsapp)
 elseif(UNIX)
-	target_link_libraries(${PROJECT_NAME} -l:libbluetooth.a)
+	target_link_libraries(${PROJECT_NAME} -l:libbluetooth.a sdbus-c++)
 	set(CMAKE_CXX_FLAGS "-fpermissive")
 endif()
 
