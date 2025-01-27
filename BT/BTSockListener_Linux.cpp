@@ -15,60 +15,72 @@
 
 using namespace std::string_literals;
 
+auto global_dbus_connection = sdbus::createSystemBusConnection(sdbus::ServiceName("org.IPoverObex"));
+
 static std::string makeUUIDfromId(uint16_t id) {
     char tmp[100] = {};
     sprintf(tmp, "0000%04hx-0000-1000-8000-00805f9b34fb", id);
     return tmp;
 }
 
+BTAddress objToBTAddr(const std::string &input) {
+    size_t pos = input.find("dev_");
+    if (pos == std::string::npos || pos + 4 >= input.length())
+        return BTAddress();
+
+    std::string macStr = input.substr(pos + 4);
+
+
+    uint8_t mac[6];
+    sscanf(macStr.c_str(), "%hhx_%hhx_%hhx_%hhx_%hhx_%hhx",
+        &mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]);
+
+    return BTAddress(mac);
+}
+
 BTSockListener::BTSockListener() {
-    server_fd = -1;
     serviceId = 0;
 }
 
 BTSockListener::~BTSockListener() {
-    if (server_fd >= 0) close(server_fd);
 }
 
-void NewConnection(sdbus::MethodCall call) {
+void BTSockListener::NewConnection(sdbus::MethodCall call) {
     sdbus::ObjectPath dev;
-    sdbus::UnixFd sock_fd;
+    sdbus::UnixFd fd;
     std::map<std::string, sdbus::Variant> fd_properties;
 
-    call >> dev;
-    call >> sock_fd;
+    call >> dev >> fd;
+    {
+        std::lock_guard lg(socks_queue_mutex);
+        socks_queue.push({fd, objToBTAddr(dev)});
+    }
+    socks_queue_cv.notify_one();
 
-    std::cout << "NewConnection " << dev << ' ' << sock_fd.get() << std::endl;
+    std::cout << "NewConnection " << dev << ' ' << fd.get() << std::endl;
 }
 
 void BTSockListener::bind(uint16_t id) {
-    sdbus::ServiceName myServiceName{"org.IPoverObex"};
-    auto connection = sdbus::createSystemBusConnection(myServiceName);
-
-    sdbus::ObjectPath myObjectPath{"/org/IPoverObex"};
-    auto IPoverObex = sdbus::createObject(*connection, myObjectPath);
+    sdbus::ObjectPath myObjectPath{"/org/IPoverObex/"s + std::to_string(id)};
+    IPoverObex_object = sdbus::createObject(*global_dbus_connection, myObjectPath);
 
     sdbus::InterfaceName interfaceName1{"org.bluez.Profile1"};
-    IPoverObex->addVTable(sdbus::MethodVTableItem{
+    IPoverObex_object->addVTable(sdbus::MethodVTableItem{
                 sdbus::MethodName{"NewConnection"},
                 sdbus::Signature{"oha{sv}"},
                 {},
                 sdbus::Signature{""},
                 {},
-                &NewConnection,
+                [=] (sdbus::MethodCall msg) {this->NewConnection(msg);},
                 {}
             }).
             forInterface(interfaceName1);
 
-    //connection->enterEventLoopAsync();
-
-    sdbus::ServiceName serviceName{"org.bluez"};
-    sdbus::ObjectPath objectPath{"/org/bluez"};
-    auto bluezProxy = sdbus::createProxy(*connection, serviceName, objectPath);
+    sdbus::ServiceName bluezServiceName{"org.bluez"};
+    sdbus::ObjectPath bluezObjectPath{"/org/bluez"};
+    auto bluezProxy = sdbus::createProxy(*global_dbus_connection, bluezServiceName, bluezObjectPath);
 
     sdbus::InterfaceName interfaceName{"org.bluez.ProfileManager1"};
-
-    sdbus::MethodName mnRegister{"RegisterProfile"};
 
     bluezProxy->callMethod("RegisterProfile")
             .onInterface("org.bluez.ProfileManager1")
@@ -80,62 +92,24 @@ void BTSockListener::bind(uint16_t id) {
                                {"RequireAuthorization", sdbus::Variant(false)},
                            });
 
-    connection->enterEventLoop();
-
-    /*auto Register = bluezProxy->createMethodCall(interfaceName, mnRegister);
-
-    std::string uuid = makeUUIDfromId(id);
-    Register << uuid << myObjectPath;
-    auto reply = bluezProxy->callMethod(Register);*/
-
-    while (1);
-
-    /*struct sockaddr_rc local_addr = {0};
-    serviceId = id;
-
-    server_fd = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
-    if (server_fd < 0) {
-        throw std::runtime_error("Failed to create socket");
-    }
-
-
-    local_addr.rc_family = AF_BLUETOOTH;
-    local_addr.rc_bdaddr = *BDADDR_ANY;
-    //local_addr.rc_channel = register_service(id);
-
-	std::cout<< local_addr.rc_channel <<'\n';
-
-    if (::bind(server_fd, (struct sockaddr*)&local_addr, sizeof(local_addr)) < 0) {
-        close(server_fd);
-        throw std::runtime_error("Failed to bind RFCOMM socket");
-    }
-
-    if (listen(server_fd, 10) < 0) {
-        close(server_fd);
-        throw std::runtime_error("Failed to listen on RFCOMM socket");
-    }*/
+    global_dbus_connection->enterEventLoopAsync();
 }
 
 bool BTSockListener::accept(BTSock &btsock, bool block) {
-    struct sockaddr_rc client_addr = {0};
-    socklen_t opt = sizeof(client_addr);
-
-    int flags = fcntl(server_fd, F_GETFL, 0);
-    if (block) {
-        fcntl(server_fd, F_SETFL, flags & ~O_NONBLOCK);
-    } else {
-        fcntl(server_fd, F_SETFL, flags | O_NONBLOCK);
-    }
-    int client_fd = ::accept(server_fd, (struct sockaddr *) &client_addr, &opt);
-
-    if (client_fd < 0) {
-        if (block || errno != EAGAIN) {
-            std::cerr << "Error accepting connection" << std::endl;
+    if (socks_queue.empty())
+        if (block) {
+            std::mutex socks_queue_cv_mutex;
+            std::unique_lock lk(socks_queue_cv_mutex);
+            socks_queue_cv.wait(lk, [=] { return !socks_queue.empty(); });
         }
-        return false;
+        else
+            return false;
+    {
+        std::lock_guard lg(socks_queue_mutex);
+        auto fr = socks_queue.front();
+        btsock = BTSock(fr.first, fr.second);
+        socks_queue.pop();
     }
-
-    btsock = BTSock(client_fd, BTAddress(client_addr.rc_bdaddr));
     return true;
 }
 

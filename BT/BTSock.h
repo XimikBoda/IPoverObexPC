@@ -14,8 +14,8 @@ using namespace Windows::Devices::Bluetooth::Rfcomm;
 using namespace Windows::Networking::Sockets;
 using namespace Windows::Storage::Streams;
 #elif __unix__
-#include <bluetooth/bluetooth.h>
-uint8_t find_server_rfcomm_channel(uint16_t service_uuid, const bdaddr_t &addr);
+#include "sdbus-c++/Message.h"
+#include "sdbus-c++/IObject.h"
 #endif
 
 class BTSock {
@@ -26,7 +26,7 @@ class BTSock {
 	DataWriter writer;
 	DataReader reader;
 #elif __unix__
-	int socket_fd = -1;
+	sdbus::UnixFd socket_fd;
     BTAddress remote_addr;
 #endif 
 public:
@@ -35,8 +35,7 @@ public:
 #ifdef WIN32
 	BTSock(StreamSocket& sock);
 #elif __unix__
-	BTSock(int socket_fd, const BTAddress& addr);
-	~BTSock();
+	BTSock(sdbus::UnixFd socket_fd, const BTAddress& addr);
 #endif 
 
 	bool connect(uint16_t id, BTAddress addr);
