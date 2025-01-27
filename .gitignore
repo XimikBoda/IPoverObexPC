@@ -2,6 +2,8 @@ build
 .cache
 .vscode
 .vs
+.idea
+cmake-build-debug
 out
 vs
 bin

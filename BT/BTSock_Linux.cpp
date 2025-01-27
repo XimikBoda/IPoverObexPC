@@ -95,11 +95,20 @@ BTAddress BTSock::getRemoteAddress() {
 }
 
 size_t BTSock::read(void* buf, size_t len) {
-    ssize_t bytes_read = ::read(socket_fd, buf, len);
-    if (bytes_read < 0) {
-        throw std::runtime_error("Failed to read from socket");
+	std::cout << "Try to read\n";
+
+    size_t total_read = 0;
+    while (total_read < len) {
+        ssize_t bytes_read = ::read(socket_fd, static_cast<uint8_t*>(buf) + total_read, len - total_read);
+        if (bytes_read < 0) {
+			std::cout << "Failed "<<bytes_read<<" "<<strerror(errno)<< " "<< socket_fd <<"\n";
+            throw std::runtime_error("Failed to read from socket");
+        } else if (bytes_read == 0) {
+            break; // End of stream
+        }
+        total_read += static_cast<size_t>(bytes_read);
     }
-    return static_cast<size_t>(bytes_read);
+    return total_read;
 }
 
 std::vector<uint8_t> BTSock::read(size_t len) {
@@ -111,11 +120,15 @@ std::vector<uint8_t> BTSock::read(size_t len) {
 }
 
 size_t BTSock::write(void* buf, size_t len) {
-    ssize_t bytes_written = ::write(socket_fd, buf, len);
-    if (bytes_written < 0) {
-        throw std::runtime_error("Failed to write to socket");
+    size_t total_written = 0;
+    while (total_written < len) {
+        ssize_t bytes_written = ::write(socket_fd, static_cast<const uint8_t*>(buf) + total_written, len - total_written);
+        if (bytes_written < 0) {
+            throw std::runtime_error("Failed to write to socket");
+        }
+        total_written += static_cast<size_t>(bytes_written);
     }
-    return static_cast<size_t>(bytes_written);
+    return total_written;
 }
 
 size_t BTSock::write(std::vector<uint8_t> buf) {
