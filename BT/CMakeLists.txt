@@ -6,6 +6,7 @@ add_library(${PROJECT_NAME} STATIC
     BTSock.h BTSock_Windows.cpp BTSock_Linux.cpp
 	BTSockListener.h BTSockListener_Windows.cpp BTSockListener_Linux.cpp
 	BTAddress.h BTAddress.cpp
+    BluezProfile.h BluezProfile.cpp
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)

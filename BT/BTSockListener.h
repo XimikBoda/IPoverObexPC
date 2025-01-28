@@ -14,8 +14,7 @@ using namespace Windows::Devices::Bluetooth;
 using namespace Windows::Devices::Bluetooth::Rfcomm;
 using namespace Windows::Networking::Sockets;
 #elif __unix__
-#include "sdbus-c++/Message.h"
-#include "sdbus-c++/IObject.h"
+#include "sdbus-c++/Types.h"
 #endif 
 
 
@@ -32,14 +31,6 @@ class BTSockListener {
 	IAsyncAction OnConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args);
 #elif __unix__
     uint16_t serviceId;
-
-	std::mutex socks_queue_mutex;
-	std::condition_variable socks_queue_cv;
-	std::queue<std::pair<sdbus::UnixFd, BTAddress>> socks_queue;
-
-	std::unique_ptr<sdbus::IObject> IPoverObex_object;
-
-	void NewConnection(sdbus::MethodCall call);
 #endif 
 public:
 	BTSockListener();
