@@ -17,10 +17,9 @@ uint64_t BTAddress::toUInt64(){
 }
 
 std::string BTAddress::toString(){
-	char str[MAC_LEN * 3 + 2] = {};
-	for (int i = 0; i < MAC_LEN; ++i)
-		sprintf(str + i * 3, "%02X:", mac[i]);
-	str[MAC_LEN * 3 - 1] = 0;
+	char str[100] = {};
+	sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X",
+		mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 	return std::string(str);
 }
 
@@ -36,14 +35,21 @@ void BTAddress::fromArray(uint8_t mac[MAC_LEN]){
 }
 
 #ifdef __unix__
-	BTAddress::BTAddress(bdaddr_t adr) {
-		from_bdaddr(adr);
-	}
+BTAddress::BTAddress(bdaddr_t adr) {
+	from_bdaddr(adr);
+}
 
-	bdaddr_t BTAddress::to_bdaddr() {
-		return *(bdaddr_t*)&mac;
-	}
-	void BTAddress::from_bdaddr(bdaddr_t adr) {
-		*(bdaddr_t*)&mac = adr;
-	}
-#endif 
+bdaddr_t BTAddress::to_bdaddr() {
+	return *(bdaddr_t*)&mac;
+}
+void BTAddress::from_bdaddr(bdaddr_t adr) {
+	*(bdaddr_t*)&mac = adr;
+}
+
+std::string BTAddress::toDBusString() {
+	char str[100] = {};
+	sprintf(str, "dev_%02X_%02X_%02X_%02X_%02X_%02X",
+		mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	return std::string(str);
+}
+#endif

@@ -24,5 +24,7 @@ public:
 	BTAddress(bdaddr_t adr);
 	bdaddr_t to_bdaddr();
 	void from_bdaddr(bdaddr_t adr);
+
+	std::string toDBusString();
 #endif 
 };
