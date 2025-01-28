@@ -40,8 +40,8 @@ int main() {
 		btsockl.accept(btsocks, true);
 		threads.push_back(std::thread(workerIn, btsocks));
 
-		//btsockc.connect(btsockl.getShortId(), btsocks.getRemoteAddress());
-		//threads.push_back(std::thread(workerOut, btsockc));
+		btsockc.connect(btsockl.getShortId(), btsocks.getRemoteAddress());
+		threads.push_back(std::thread(workerOut, btsockc));
 	}
 
 	char c;

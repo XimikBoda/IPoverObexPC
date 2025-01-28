@@ -6,10 +6,9 @@
 #include <functional>
 #include <unistd.h>
 #include <fcntl.h>
-#include <bluetooth/sdp.h>
-#include <bluetooth/sdp_lib.h>
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/rfcomm.h>
+#include "BluezProfile.h"
+
+using namespace std::string_literals;
 
 static void set_blocking(int fd, bool blocking) {
     int saved_flags = fcntl(fd, F_GETFL);
@@ -29,7 +28,10 @@ BTSock::BTSock(sdbus::UnixFd socket_fd, const BTAddress& addr) {
 }
 
 bool BTSock::connect(uint16_t id, BTAddress addr) {
-    
+    sdbus::UnixFd fd;
+    BluezProfile::getById(id).connect("/org/bluez/hci0/"s + addr.toDBusString(), fd);
+
+    *this = BTSock(socket_fd, addr);
     return true;
 }
 

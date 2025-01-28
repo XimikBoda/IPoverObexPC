@@ -14,8 +14,7 @@ using namespace Windows::Devices::Bluetooth::Rfcomm;
 using namespace Windows::Networking::Sockets;
 using namespace Windows::Storage::Streams;
 #elif __unix__
-#include "sdbus-c++/Message.h"
-#include "sdbus-c++/IObject.h"
+#include "sdbus-c++/Types.h"
 #endif
 
 class BTSock {
