@@ -26,7 +26,7 @@ class BTSock {
 	DataReader reader;
 #elif __unix__
 	sdbus::UnixFd socket_fd;
-    BTAddress remote_addr;
+	BTAddress remote_addr;
 #endif 
 public:
 	BTSock();

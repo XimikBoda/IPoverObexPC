@@ -7,46 +7,43 @@
 
 using namespace std::string_literals;
 
-BTAddress objToBTAddr(const std::string &input) {
-    size_t pos = input.find("dev_");
-    if (pos == std::string::npos || pos + 4 >= input.length())
-        return BTAddress();
+BTAddress objToBTAddr(const std::string& input) {
+	size_t pos = input.find("dev_");
+	if (pos == std::string::npos || pos + 4 >= input.length())
+		return BTAddress();
 
-    std::string macStr = input.substr(pos + 4);
+	std::string macStr = input.substr(pos + 4);
 
 
-    uint8_t mac[6];
-    sscanf(macStr.c_str(), "%hhx_%hhx_%hhx_%hhx_%hhx_%hhx",
-        &mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]);
+	uint8_t mac[6];
+	sscanf(macStr.c_str(), "%hhx_%hhx_%hhx_%hhx_%hhx_%hhx",
+		&mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]);
 
-    return BTAddress(mac);
+	return BTAddress(mac);
 }
 
 BTSockListener::BTSockListener() {
-    serviceId = 0;
-}
-
-BTSockListener::~BTSockListener() {
+	serviceId = 0;
 }
 
 void BTSockListener::bind(uint16_t id) {
-    BluezProfile::getById(id).bind();
-    serviceId = id;
+	BluezProfile::getById(id).bind();
+	serviceId = id;
 }
 
-bool BTSockListener::accept(BTSock &btsock, bool block) {
-    sdbus::UnixFd fd;
-    std::string dev;
-    bool res = BluezProfile::getById(serviceId).accept(dev, fd, block);
+bool BTSockListener::accept(BTSock& btsock, bool block) {
+	sdbus::UnixFd fd;
+	std::string dev;
+	bool res = BluezProfile::getById(serviceId).accept(dev, fd, block);
 
-    if (res)
-        btsock = BTSock(fd, objToBTAddr(dev));
+	if (res)
+		btsock = BTSock(fd, objToBTAddr(dev));
 
-    return res;
+	return res;
 }
 
 uint16_t BTSockListener::getShortId() {
-    return serviceId;
+	return serviceId;
 }
 
 #endif // __unix__

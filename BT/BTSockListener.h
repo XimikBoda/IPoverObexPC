@@ -30,15 +30,14 @@ class BTSockListener {
 
 	IAsyncAction OnConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args);
 #elif __unix__
-    uint16_t serviceId;
+	uint16_t serviceId;
 #endif 
 public:
 	BTSockListener();
-    ~BTSockListener();
 
 	void bind(uint16_t id);
 
-	bool accept(BTSock &btsock, bool block = false);
+	bool accept(BTSock& btsock, bool block = false);
 
 	uint16_t getShortId();
 };
