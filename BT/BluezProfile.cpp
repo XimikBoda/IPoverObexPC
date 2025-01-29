@@ -101,12 +101,12 @@ void BluezProfile::NewConnection(sdbus::MethodCall call){
     call >> dev >> fd;
 
     if(connection){
-    	std::cout << "NewConnection (client) " << dev << ' ' << fd.get() << std::endl;
+    	//std::cout << "NewConnection (client) " << dev << ' ' << fd.get() << std::endl;
 
         connect_fd = fd;
         connection = false;
     }else{
-		std::cout << "NewConnection " << dev << ' ' << fd.get() << std::endl;
+		//std::cout << "NewConnection " << dev << ' ' << fd.get() << std::endl;
 		{
 			std::lock_guard lg(clients_queue_mutex);
 			clients_queue.push({fd, dev});
@@ -158,6 +158,8 @@ void BluezProfile::connect(std::string dev, sdbus::UnixFd &fd){
 	connection = true;
     connect_fd = sdbus::UnixFd();
     ConnectProfile(dev);
+    fd = connect_fd;
+    //connect_fd.release();
 
     UnregisterProfile();
     if(binded)

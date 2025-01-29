@@ -31,7 +31,7 @@ bool BTSock::connect(uint16_t id, BTAddress addr) {
     sdbus::UnixFd fd;
     BluezProfile::getById(id).connect("/org/bluez/hci0/"s + addr.toDBusString(), fd);
 
-    *this = BTSock(socket_fd, addr);
+    *this = BTSock(fd, addr);
     return true;
 }
 
