@@ -13,7 +13,9 @@ using namespace Windows::Devices::Bluetooth;
 using namespace Windows::Devices::Bluetooth::Rfcomm;
 using namespace Windows::Networking::Sockets;
 using namespace Windows::Storage::Streams;
-#endif // WIN32
+#elif __unix__
+#include "sdbus-c++/Types.h"
+#endif
 
 class BTSock {
 #ifdef WIN32
@@ -22,13 +24,18 @@ class BTSock {
 
 	DataWriter writer;
 	DataReader reader;
-#endif // WIN32
+#elif __unix__
+	sdbus::UnixFd socket_fd;
+	BTAddress remote_addr;
+#endif 
 public:
 	BTSock();
 
 #ifdef WIN32
 	BTSock(StreamSocket& sock);
-#endif // WIN32
+#elif __unix__
+	BTSock(sdbus::UnixFd socket_fd, const BTAddress& addr);
+#endif 
 
 	bool connect(uint16_t id, BTAddress addr);
 

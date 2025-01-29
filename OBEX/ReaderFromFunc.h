@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <functional>
+#include <cstdint>
 
 typedef std::vector<uint8_t> vec;
 typedef std::function<vec(size_t, bool)> ReaderFunc;
