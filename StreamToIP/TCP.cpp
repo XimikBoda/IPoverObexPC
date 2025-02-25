@@ -29,11 +29,21 @@ TCP::RspStatus TCP::mapSfStatus(sf::Socket::Status status) {
 
 void TCP::connect(std::string addr, uint16_t port, std::function<void(uint8_t)> result) {
 	if (connect_future.valid())
-		result(Busy);
+		return result(Busy);
 
 	connect_future = std::async(std::launch::async, [&]() {
 		auto ip = sf::IpAddress::resolve(addr);
 		auto res = sock->connect(ip.value(), port);
+
+		if (res == sf::Socket::Status::Done)
+			connected = true;
+
 		result(mapSfStatus(res));
 		});
 }
+
+void TCP::disconnect() {
+	sock->disconnect();
+	connected = false;
+}
+

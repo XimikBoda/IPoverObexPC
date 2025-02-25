@@ -31,5 +31,6 @@ class StreamToIP {
 
 	void parseTCPPacket();
 	void parseTCPConnectPacket();
+	void parseTCDisconnectPacket();
 public:
 };

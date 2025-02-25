@@ -9,7 +9,8 @@
 class TCP {
 public:
 	enum TCPAct : uint8_t {
-		Connect_A
+		Connect,
+		Disconnect
 	};
 
 	enum RspStatus : uint8_t {
@@ -23,8 +24,13 @@ private:
 	std::shared_ptr<sf::TcpSocket> sock = std::make_shared<sf::TcpSocket>();
 	std::future<void> connect_future;
 
+	bool connected = false;
+
 	TCP::RspStatus mapSfStatus(sf::Socket::Status status);
+
 public:
 	TCP() = default;
 	void connect(std::string addr, uint16_t port, std::function<void(uint8_t)> result);
+
+	void disconnect();
 };
