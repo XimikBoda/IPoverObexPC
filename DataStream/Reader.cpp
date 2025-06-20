@@ -3,10 +3,16 @@
 
 namespace DataStream {
 
-	void Reader::sdr_connect(ReaderAgent* sdr_agent) {
+	bool Reader::sdr_connect(ReaderAgent* sdr_agent, bool connect_both) {
 		if (this->sdr_agent)
-			sdr_close();
+			return false;
+
+		if (connect_both)
+			if (!sdr_agent->sdra_connect(this, false))
+				return false;
+
 		this->sdr_agent = sdr_agent;
+		return true;
 	}
 
 	void Reader::sdr_close(bool close_both) {
