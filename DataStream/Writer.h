@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include "DataStream.h"
 
 namespace DataStream {
 	typedef class WriterAgent;
@@ -11,7 +11,7 @@ namespace DataStream {
 		void sdw_close(bool close_both = true);
 
 		virtual bool sdw_write(void* buf, size_t len, size_t& writed) = 0;
-		virtual void sdw_write(std::vector<uint8_t> buf) = 0;
+		virtual void sdw_write(vec buf) = 0;
 
 		~Writer();
 	};

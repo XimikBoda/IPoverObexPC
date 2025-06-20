@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include "DataStream.h"
 
 namespace DataStream {
 	typedef class ReaderAgent;
@@ -11,7 +11,7 @@ namespace DataStream {
 		void sdr_close(bool close_both = true);
 
 		virtual bool sdr_read(void* buf, size_t len, size_t& readed) = 0;
-		virtual std::vector<uint8_t> sdr_read(size_t len) = 0;
+		virtual vec sdr_read(size_t len) = 0;
 
 		~Reader();
 	};

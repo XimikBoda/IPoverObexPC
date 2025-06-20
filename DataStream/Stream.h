@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include "DataStream.h"
 #include <mutex>
 #include <condition_variable>
 
@@ -12,7 +12,7 @@ namespace DataStream {
 		std::mutex sds_mutex;
 		std::condition_variable sds_cv;
 
-		std::vector<uint8_t> sds_buf;
+		vec sds_buf;
 
 	public:
 		bool sds_connect(StreamAgent* sds_agent, bool connect_both = false);

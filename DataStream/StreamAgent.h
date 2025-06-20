@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include "DataStream.h"
 
 namespace DataStream {
 	typedef class Stream;

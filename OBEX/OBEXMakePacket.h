@@ -6,8 +6,6 @@
 
 #include <WriterAgent.h>
 
-typedef std::vector<uint8_t> vec;
-
 class OBEXMakePacket : public DataStream::WriterAgent {
 public:
 	vec buf;

@@ -5,8 +5,6 @@
 
 #include <ReaderAgent.h>
 
-typedef std::vector<uint8_t> vec;
-
 class Reader : public DataStream::ReaderAgent {
 public:
 	size_t read_count = 0;

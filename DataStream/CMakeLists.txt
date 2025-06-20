@@ -3,6 +3,7 @@
 set(PROJECT_NAME "DataStream")
 
 add_library(${PROJECT_NAME} STATIC 
+    DataStream.h
     Reader.h Reader.cpp
     ReaderAgent.h ReaderAgent.cpp
     Writer.h Writer.cpp

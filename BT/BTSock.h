@@ -45,13 +45,13 @@ public:
 	BTAddress getRemoteAddress();
 
 	size_t read(void* buf, size_t len);
-	std::vector<uint8_t> read(size_t len);
+	vec read(size_t len);
 	size_t write(void* buf, size_t len);
-	size_t write(std::vector<uint8_t> buf);
+	size_t write(vec buf);
 
 	bool BTSock::sdr_read(void* buf, size_t len, size_t& readed) override;
-	std::vector<uint8_t> sdr_read(size_t len) override;
+	vec sdr_read(size_t len) override;
 	bool sdw_write(void* buf, size_t len, size_t& writed) override;
-	void sdw_write(std::vector<uint8_t> buf) override;
+	void sdw_write(vec buf) override;
 };
 
