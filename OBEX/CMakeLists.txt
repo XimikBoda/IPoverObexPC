@@ -6,7 +6,7 @@ add_library(${PROJECT_NAME} STATIC
     OBEX.h
     OBEXServer.h OBEXServer.cpp
     OBEXClient.h OBEXClient.cpp
-    ReaderFromFunc.h ReaderFromFunc.cpp
+    Reader.h Reader.cpp
     OBEXMakePacket.h OBEXMakePacket.cpp
 )
 

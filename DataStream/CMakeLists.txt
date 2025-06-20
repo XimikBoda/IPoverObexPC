@@ -5,6 +5,8 @@ set(PROJECT_NAME "DataStream")
 add_library(${PROJECT_NAME} STATIC 
     Reader.h Reader.cpp
     ReaderAgent.h ReaderAgent.cpp
+    Writer.h Writer.cpp
+    WriterAgent.h WriterAgent.cpp
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)

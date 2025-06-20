@@ -4,26 +4,26 @@
 #define NO_HI(x) ((x) & 0b01111111)
 
 void OBEXClient::makeConnectPacket() {
-	out_pack.init(last_pack = Connect);
-	out_pack.putUInt8(0x10);
-	out_pack.putUInt8(0x00);
-	out_pack.putUInt16(max_pack_size);
-	out_pack.send(writer);
+	writer.init(last_pack = Connect);
+	writer.putUInt8(0x10);
+	writer.putUInt8(0x00);
+	writer.putUInt16(max_pack_size);
+	writer.send();
 }
 
 void OBEXClient::makeFistPutPacket(std::string name, uint32_t size) {
 	last_pack = Put;
-	out_pack.init(NO_HI(Put));
+	writer.init(NO_HI(Put));
 	makeTextHeader(Name, name);
 	makeIntHeader(Length, size);
-	out_pack.send(writer);
+	writer.send();
 }
 
 void OBEXClient::makePutPacket(vec buf) {
 	last_pack = Put;
-	out_pack.init(NO_HI(Put));
+	writer.init(NO_HI(Put));
 	makeBytesHeader(Body, buf);
-	out_pack.send(writer);
+	writer.send();
 }
 
 void OBEXClient::makePutPacketAndResponce(vec buf) {
@@ -32,27 +32,27 @@ void OBEXClient::makePutPacketAndResponce(vec buf) {
 }
 
 void OBEXClient::makeTextHeader(uint8_t hid, std::string text) {
-	out_pack.putUInt8(hid);
-	out_pack.putUInt16(3 + text.size() * 2 + 2);
+	writer.putUInt8(hid);
+	writer.putUInt16(3 + text.size() * 2 + 2);
 	for (int i = 0; i < text.size(); ++i)
-		out_pack.putUInt16(text[i]);
-	out_pack.putUInt16(0);
+		writer.putUInt16(text[i]);
+	writer.putUInt16(0);
 }
 
 void OBEXClient::makeBytesHeader(uint8_t hid, vec buf) {
-	out_pack.putUInt8(hid);
-	out_pack.putUInt16(3 + buf.size());
-	out_pack.putBuf(buf);
+	writer.putUInt8(hid);
+	writer.putUInt16(3 + buf.size());
+	writer.putBuf(buf);
 }
 
 void OBEXClient::makeByteHeader(uint8_t hid, uint8_t val) {
-	out_pack.putUInt8(hid);
-	out_pack.putUInt8(val);
+	writer.putUInt8(hid);
+	writer.putUInt8(val);
 }
 
 void OBEXClient::makeIntHeader(uint8_t hid, uint32_t val) {
-	out_pack.putUInt8(hid);
-	out_pack.putUInt32(val);
+	writer.putUInt8(hid);
+	writer.putUInt32(val);
 }
 
 void OBEXClient::readResponsePacket() {

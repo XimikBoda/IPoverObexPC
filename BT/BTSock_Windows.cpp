@@ -23,16 +23,16 @@ BluetoothDevice GetBluetoothDeviceFromSocket(const StreamSocket& sock) {
 	return BluetoothDevice::FromHostNameAsync(sock.Information().RemoteAddress()).get();
 }
 
-BTSock::BTSock(): 
-	device(BluetoothDevice::FromBluetoothAddressAsync(0).get()), 
+BTSock::BTSock() :
+	device(BluetoothDevice::FromBluetoothAddressAsync(0).get()),
 	writer(sock.OutputStream()), reader(sock.InputStream())
 {
 	reader.InputStreamOptions(InputStreamOptions::ReadAhead);
 }
 
-BTSock::BTSock(StreamSocket& sock): 
+BTSock::BTSock(StreamSocket& sock) :
 	device(GetBluetoothDeviceFromSocket(sock)),
-	writer(sock.OutputStream()), reader(sock.InputStream()) 
+	writer(sock.OutputStream()), reader(sock.InputStream())
 {
 	this->sock = sock;
 	reader.InputStreamOptions(InputStreamOptions::ReadAhead);
@@ -42,7 +42,7 @@ bool BTSock::connect(uint16_t id, BTAddress addr)
 {
 	RfcommServiceId serviceId = RfcommServiceId::FromShortId(id);
 	device = BluetoothDevice::FromBluetoothAddressAsync(addr.toUInt64()).get();
-	if(!device)
+	if (!device)
 		return false;
 
 	auto rfcommServiceResult = device.GetRfcommServicesForIdAsync(serviceId).get();
@@ -107,6 +107,14 @@ bool BTSock::sdr_read(void* buf, size_t len, size_t& readed) {
 
 std::vector<uint8_t> BTSock::sdr_read(size_t len) {
 	return read(len);
+}
+
+bool BTSock::sdw_write(void* buf, size_t len, size_t& writed) {
+	writed = write(buf, len);
+	return true;
+}
+void BTSock::sdw_write(std::vector<uint8_t> buf) {
+	write(buf);
 }
 
 #endif // WIN32

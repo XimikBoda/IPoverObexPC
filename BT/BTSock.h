@@ -3,6 +3,7 @@
 #include "BTAddress.h"
 
 #include <Reader.h>
+#include <Writer.h>
 
 #ifdef WIN32
 #include <winrt/Windows.Devices.Bluetooth.h>
@@ -19,7 +20,7 @@ using namespace Windows::Storage::Streams;
 #include "sdbus-c++/Types.h"
 #endif
 
-class BTSock : public DataStream::Reader {
+class BTSock : public DataStream::Reader, public DataStream::Writer {
 #ifdef WIN32
 	StreamSocket sock;
 	BluetoothDevice device;
@@ -50,5 +51,7 @@ public:
 
 	bool BTSock::sdr_read(void* buf, size_t len, size_t& readed) override;
 	std::vector<uint8_t> sdr_read(size_t len) override;
+	bool sdw_write(void* buf, size_t len, size_t& writed) override;
+	void sdw_write(std::vector<uint8_t> buf) override;
 };
 

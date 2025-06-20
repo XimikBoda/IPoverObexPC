@@ -4,6 +4,7 @@
 #include "OBEXMakePacket.h"
 #include "OBEX.h"
 
+typedef std::function<void(vec)> WriteFunc; // temp
 
 class OBEXServer {
 	uint8_t current_pack = 0;
@@ -15,7 +16,6 @@ class OBEXServer {
 
 	OBEX_States state = Inited;
 
-	OBEXMakePacket out_pack;
 
 	void getPacketType();
 	void readPacket();
@@ -38,7 +38,7 @@ class OBEXServer {
 
 public:
 	Reader reader;
-	WriteFunc writer;
+	OBEXMakePacket writer;
 	WriteFunc stream_writer;
 
 	void run();

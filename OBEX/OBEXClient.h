@@ -15,8 +15,6 @@ class OBEXClient {
 	uint8_t rflags = 0;
 	uint16_t max_pack_size = 0xFFFF;
 
-	OBEXMakePacket out_pack;
-
 	void makeConnectPacket();
 	void makeFistPutPacket(std::string name, uint32_t size);
 	void makePutPacket(vec buf);
@@ -39,7 +37,7 @@ class OBEXClient {
 	void skipPacketToEnd();
 public:
 	Reader reader;
-	WriteFunc writer;
+	OBEXMakePacket writer;
 
 	void connet();
 	void initPutStream(std::string name, uint32_t size);

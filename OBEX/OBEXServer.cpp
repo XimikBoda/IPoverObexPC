@@ -101,26 +101,26 @@ void OBEXServer::readStream() {
 }
 
 void OBEXServer::makeConnectSuccessResponse() {
-	out_pack.init(Success);
-	out_pack.putUInt8(version);
-	out_pack.putUInt8(0x00);
-	out_pack.putUInt16(max_pack_size);
-	out_pack.send(writer);
+	writer.init(Success);
+	writer.putUInt8(version);
+	writer.putUInt8(0x00);
+	writer.putUInt16(max_pack_size);
+	writer.send();
 }
 
 void OBEXServer::makePutContinueResponse() {
-	out_pack.init(Continue);
-	out_pack.send(writer);
+	writer.init(Continue);
+	writer.send();
 }
 
 void OBEXServer::makePutFinalResponse() {
-	out_pack.init(Success);
-	out_pack.send(writer);
+	writer.init(Success);
+	writer.send();
 }
 
 void OBEXServer::makeDisconnectSuccessResponse() {
-	out_pack.init(Success);
-	out_pack.send(writer);
+	writer.init(Success);
+	writer.send();
 }
 
 void OBEXServer::skipPacketToEnd() {
