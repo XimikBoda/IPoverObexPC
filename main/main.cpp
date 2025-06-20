@@ -9,9 +9,9 @@ uint16_t obex_id = 0x1105;
 
 void workerIn(BTSock btsocks) {
 	std::cout << "Connected: " << btsocks.getRemoteAddress().toString() << '\n';
-	ReaderFromFunc reader([=, &btsocks](size_t len, bool partial){return btsocks.read(len); });
+	
 	OBEXServer OBEXs;
-	OBEXs.reader = reader;
+	OBEXs.reader.sdra_connect(&btsocks);
 	OBEXs.writer = [=, &btsocks](vec buf) { btsocks.write(buf); };
 	OBEXs.stream_writer = [=, &btsocks](vec buf) { std::cout << std::string(buf.begin(), buf.end()); };
 	OBEXs.run();
@@ -19,8 +19,8 @@ void workerIn(BTSock btsocks) {
 
 void workerOut(BTSock btsockc) {
 	OBEXClient OBEXc;
-	ReaderFromFunc reader([=, &btsockc](size_t len, bool partial) {return btsockc.read(len); });
-	OBEXc.reader = reader;
+
+	OBEXc.reader.sdra_connect(&btsockc);
 	OBEXc.writer = [=, &btsockc](vec buf) { btsockc.write(buf); };
 	OBEXc.connet();
 	OBEXc.initPutStream("IpOverObex.txt", 0x7FFFFFFF);

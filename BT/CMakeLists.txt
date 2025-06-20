@@ -20,5 +20,6 @@ elseif(UNIX)
 	set(CMAKE_CXX_FLAGS "-fpermissive")
 endif()
 
+target_link_libraries(${PROJECT_NAME} DataStream)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ".")

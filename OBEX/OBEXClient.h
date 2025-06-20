@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "ReaderFromFunc.h"
+#include "Reader.h"
 #include "OBEXMakePacket.h"
 #include "OBEX.h"
 
@@ -38,7 +38,7 @@ class OBEXClient {
 
 	void skipPacketToEnd();
 public:
-	ReaderFromFunc reader;
+	Reader reader;
 	WriteFunc writer;
 
 	void connet();

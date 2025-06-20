@@ -100,5 +100,14 @@ size_t BTSock::write(std::vector<uint8_t> buf)
 	return buf.size();
 }
 
+bool BTSock::sdr_read(void* buf, size_t len, size_t& readed) {
+	readed = read(buf, len);
+	return true;
+}
+
+std::vector<uint8_t> BTSock::sdr_read(size_t len) {
+	return read(len);
+}
+
 #endif // WIN32
 
