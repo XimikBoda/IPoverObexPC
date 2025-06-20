@@ -7,6 +7,8 @@ add_library(${PROJECT_NAME} STATIC
     ReaderAgent.h ReaderAgent.cpp
     Writer.h Writer.cpp
     WriterAgent.h WriterAgent.cpp
+    Stream.h Stream.cpp
+    StreamAgent.h StreamAgent.cpp
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
