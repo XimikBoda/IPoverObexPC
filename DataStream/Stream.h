@@ -15,7 +15,7 @@ namespace DataStream {
 		vec sds_buf;
 
 	public:
-		bool sds_connect(StreamAgent* sds_agent, bool connect_both = false);
+		bool sds_connect(StreamAgent* sds_agent, bool connect_both = true);
 		void sds_close(bool close_both = true);
 
 		void read(void* buf, size_t len, size_t& readed);

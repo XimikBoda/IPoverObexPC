@@ -30,6 +30,10 @@ namespace DataStream {
 		return sdsa_p->sds_write(buf, len);
 	}
 
+	void StreamAgent::write(vec &buf) {
+		write(buf.data(), buf.size());
+	}
+
 	StreamAgent::~StreamAgent() {
 		sdsa_close();
 	}
