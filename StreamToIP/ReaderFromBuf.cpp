@@ -4,10 +4,7 @@ static const int SEGMENT_BITS = 0x7F;
 static const int CONTINUE_BIT = 0x80;
 
 vec ReaderFromBuf::readVecBlocking(size_t len) {
-
-
-	read_count += len;
-	return buf;
+	return read(len);
 }
 
 uint8_t ReaderFromBuf::readUInt8() {
@@ -49,8 +46,8 @@ std::string ReaderFromBuf::readString() {
 	return std::string(buf.begin(), buf.end());
 }
 
-void ReaderFromBuf::skipToEnd(size_t pack_len) {
-	if (read_count >= pack_len)
-		return;
-	readVecBlocking(pack_len - read_count);
-}
+//void ReaderFromBuf::skipToEnd(size_t pack_len) {
+//	if (read_count >= pack_len)
+//		return;
+//	readVecBlocking(pack_len - read_count);
+//}

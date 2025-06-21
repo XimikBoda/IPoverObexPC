@@ -1,10 +1,9 @@
 #pragma once
 #include <vector>
+#include <StreamAgent.h>
 #include "Reader.h"
 #include "OBEXMakePacket.h"
 #include "OBEX.h"
-
-typedef std::function<void(vec)> WriteFunc; // temp
 
 class OBEXServer {
 	uint8_t current_pack = 0;
@@ -39,7 +38,7 @@ class OBEXServer {
 public:
 	Reader reader;
 	OBEXMakePacket writer;
-	WriteFunc stream_writer;
+	DataStream::StreamAgent stream_writer;
 
 	void run();
 };

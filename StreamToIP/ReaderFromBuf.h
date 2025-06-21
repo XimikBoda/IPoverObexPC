@@ -2,14 +2,12 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <Stream.h>
 
 typedef std::vector<uint8_t> vec;
 
-class ReaderFromBuf {
+class ReaderFromBuf : public DataStream::Stream {
 public:
-	size_t read_count = 0;
-	vec buf;
-
 
 	ReaderFromBuf() = default;
 
@@ -20,5 +18,5 @@ public:
 	uint32_t readVarInt();
 	std::string readString();
 
-	void skipToEnd(size_t pack_len);
+	//void skipToEnd(size_t pack_len);
 };
