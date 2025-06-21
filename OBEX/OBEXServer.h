@@ -1,9 +1,9 @@
 #pragma once
 #include <vector>
-#include "ReaderFromFunc.h"
+#include <StreamAgent.h>
+#include "Reader.h"
 #include "OBEXMakePacket.h"
 #include "OBEX.h"
-
 
 class OBEXServer {
 	uint8_t current_pack = 0;
@@ -15,7 +15,6 @@ class OBEXServer {
 
 	OBEX_States state = Inited;
 
-	OBEXMakePacket out_pack;
 
 	void getPacketType();
 	void readPacket();
@@ -37,9 +36,9 @@ class OBEXServer {
 	void skipPacketToEnd();
 
 public:
-	ReaderFromFunc reader;
-	WriteFunc writer;
-	WriteFunc stream_writer;
+	Reader reader;
+	OBEXMakePacket writer;
+	DS::StreamAgent stream_writer;
 
 	void run();
 };

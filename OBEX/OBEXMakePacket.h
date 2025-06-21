@@ -4,10 +4,9 @@
 #include <cstdint>
 #include <cstring>
 
-typedef std::vector<uint8_t> vec;
-typedef std::function<void(vec)> WriteFunc;
+#include <WriterAgent.h>
 
-class OBEXMakePacket {
+class OBEXMakePacket : public DS::WriterAgent {
 public:
 	vec buf;
 
@@ -19,5 +18,5 @@ public:
 	void putUInt16(uint16_t val);
 	void putUInt32(uint32_t val);
 
-	void send(WriteFunc writer);
+	void send();
 };

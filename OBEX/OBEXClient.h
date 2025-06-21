@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "ReaderFromFunc.h"
+#include "Reader.h"
 #include "OBEXMakePacket.h"
 #include "OBEX.h"
 
@@ -14,8 +14,6 @@ class OBEXClient {
 	uint8_t rversion = 0x10;
 	uint8_t rflags = 0;
 	uint16_t max_pack_size = 0xFFFF;
-
-	OBEXMakePacket out_pack;
 
 	void makeConnectPacket();
 	void makeFistPutPacket(std::string name, uint32_t size);
@@ -38,8 +36,8 @@ class OBEXClient {
 
 	void skipPacketToEnd();
 public:
-	ReaderFromFunc reader;
-	WriteFunc writer;
+	Reader reader;
+	OBEXMakePacket writer;
 
 	void connet();
 	void initPutStream(std::string name, uint32_t size);

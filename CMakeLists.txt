@@ -29,6 +29,7 @@ set(SFML_BUILD_WINDOW FALSE)
 add_subdirectory(SFML) 
 
 add_subdirectory(main)
+add_subdirectory(DataStream)
 add_subdirectory(BT)
 add_subdirectory(OBEX)
 add_subdirectory(StreamToIP)

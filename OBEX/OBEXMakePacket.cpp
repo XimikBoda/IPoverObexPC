@@ -37,9 +37,9 @@ void OBEXMakePacket::putUInt32(uint32_t val) {
 	putBuf({ val8[3], val8[2], val8[1], val8[0] });
 }
 
-void OBEXMakePacket::send(WriteFunc writer) {
+void OBEXMakePacket::send() {
 	update_size();
-	writer(buf);
+	write(buf);
 }
 
 

@@ -2,6 +2,9 @@
 #include <queue>
 #include "BTAddress.h"
 
+#include <Reader.h>
+#include <Writer.h>
+
 #ifdef WIN32
 #include <winrt/Windows.Devices.Bluetooth.h>
 #include <winrt/Windows.Networking.Sockets.h>
@@ -17,7 +20,7 @@ using namespace Windows::Storage::Streams;
 #include "sdbus-c++/Types.h"
 #endif
 
-class BTSock {
+class BTSock : public DS::Reader, public DS::Writer {
 #ifdef WIN32
 	StreamSocket sock;
 	BluetoothDevice device;
@@ -42,8 +45,13 @@ public:
 	BTAddress getRemoteAddress();
 
 	size_t read(void* buf, size_t len);
-	std::vector<uint8_t> read(size_t len);
+	vec read(size_t len);
 	size_t write(void* buf, size_t len);
-	size_t write(std::vector<uint8_t> buf);
+	size_t write(vec buf);
+
+	bool BTSock::sdr_read(void* buf, size_t len, size_t& readed) override;
+	vec sdr_read(size_t len) override;
+	bool sdw_write(void* buf, size_t len, size_t& writed) override;
+	void sdw_write(vec buf) override;
 };
 

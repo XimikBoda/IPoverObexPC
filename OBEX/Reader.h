@@ -3,17 +3,13 @@
 #include <functional>
 #include <cstdint>
 
-typedef std::vector<uint8_t> vec;
-typedef std::function<vec(size_t, bool)> ReaderFunc;
+#include <ReaderAgent.h>
 
-class ReaderFromFunc {
+class Reader : public DS::ReaderAgent {
 public:
 	size_t read_count = 0;
 
-	ReaderFunc reader_func;
-
-	ReaderFromFunc() = default;
-	ReaderFromFunc(ReaderFunc func);
+	Reader() = default;
 
 	vec readVecBlocking(size_t len);
 	uint8_t readUInt8();
