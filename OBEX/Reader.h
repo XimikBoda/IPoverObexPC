@@ -5,7 +5,7 @@
 
 #include <ReaderAgent.h>
 
-class Reader : public DataStream::ReaderAgent {
+class Reader : public DS::ReaderAgent {
 public:
 	size_t read_count = 0;
 

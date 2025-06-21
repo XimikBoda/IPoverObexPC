@@ -20,7 +20,7 @@ using namespace Windows::Storage::Streams;
 #include "sdbus-c++/Types.h"
 #endif
 
-class BTSock : public DataStream::Reader, public DataStream::Writer {
+class BTSock : public DS::Reader, public DS::Writer {
 #ifdef WIN32
 	StreamSocket sock;
 	BluetoothDevice device;

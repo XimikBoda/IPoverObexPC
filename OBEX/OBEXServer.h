@@ -38,7 +38,7 @@ class OBEXServer {
 public:
 	Reader reader;
 	OBEXMakePacket writer;
-	DataStream::StreamAgent stream_writer;
+	DS::StreamAgent stream_writer;
 
 	void run();
 };

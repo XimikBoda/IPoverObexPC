@@ -6,7 +6,7 @@
 
 typedef std::vector<uint8_t> vec;
 
-class ReaderFromBuf : public DataStream::Stream {
+class ReaderFromBuf : public DS::Stream {
 public:
 
 	ReaderFromBuf() = default;

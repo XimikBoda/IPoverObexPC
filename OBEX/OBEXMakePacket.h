@@ -6,7 +6,7 @@
 
 #include <WriterAgent.h>
 
-class OBEXMakePacket : public DataStream::WriterAgent {
+class OBEXMakePacket : public DS::WriterAgent {
 public:
 	vec buf;
 
