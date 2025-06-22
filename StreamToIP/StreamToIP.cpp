@@ -17,7 +17,8 @@ void StreamToIP::makeRspGeneral(uint16_t type_id, uint8_t act, uint8_t rsp) {
 }
 
 void StreamToIP::parsePacket() {
-	size = reader.readVarInt();
+	//size = reader.readVarInt(); // Do we nned this?
+	size = reader.readUInt16();
 	uint16_t type_id = reader.readUInt16();
 	type = getType(type_id);
 	id = getId(type_id);
@@ -39,7 +40,7 @@ void StreamToIP::parseTCPPacket() {
 		parseTCPConnectPacket();
 		break;
 	case TCP::Disconnect:
-		parseTCPConnectPacket();
+		parseTCDisconnectPacket();
 		break;
 	default:
 		break;
@@ -62,4 +63,10 @@ void StreamToIP::parseTCDisconnectPacket() {
 	uint16_t port = reader.readUInt16();
 
 	TCPs[id].disconnect();
+}
+
+void StreamToIP::run() {
+	while (1) {
+		parsePacket();
+	}
 }

@@ -13,7 +13,6 @@ class StreamToIP {
 		TCP_T
 	};
 
-	ReaderFromBuf reader;
 
 	std::map<uint16_t, TCP> TCPs;
 
@@ -33,4 +32,6 @@ class StreamToIP {
 	void parseTCPConnectPacket();
 	void parseTCDisconnectPacket();
 public:
+	ReaderFromBuf reader;
+	void run();
 };

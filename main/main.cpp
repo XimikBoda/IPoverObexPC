@@ -4,28 +4,39 @@
 #include <BTSockListener.h>
 #include <OBEXServer.h>
 #include <OBEXClient.h>
+#include <StreamToIP.h>
 
 uint16_t obex_id = 0x1105;
 
-void workerIn(BTSock btsocks) {
+void worker(BTSock btsocks, BTSock btsockc) { // TODO make class
 	std::cout << "Connected: " << btsocks.getRemoteAddress().toString() << '\n';
 
 	OBEXServer OBEXs;
 	OBEXs.reader.sdra_connect(&btsocks);
 	OBEXs.writer.sdwa_connect(&btsocks);
-	OBEXs.stream_writer = [=, &btsocks](vec buf) { std::cout << std::string(buf.begin(), buf.end()); };
-	OBEXs.run();
-}
 
-void workerOut(BTSock btsockc) {
 	OBEXClient OBEXc;
 	OBEXc.reader.sdra_connect(&btsockc);
 	OBEXc.writer.sdwa_connect(&btsockc);
+
+	StreamToIP stip;
+	stip.reader.sds_connect(&OBEXs.stream_writer);
+
 	OBEXc.connet();
 	OBEXc.initPutStream("IpOverObex.txt", 0x7FFFFFFF);
 
+
+
+	std::thread a([&]() { OBEXs.run(); }); // temp 
+	std::thread b([&]() { stip.run(); }); // temp 
+
+
 	std::string str = "Hi from pc\n";
 	OBEXc.PutStreamData(vec(str.begin(), str.end()));
+
+	while (1) {
+		_sleep(10000); // temp
+	}
 }
 
 std::vector<std::thread> threads;
@@ -37,10 +48,9 @@ int main() {
 	while (true) {
 		BTSock btsocks, btsockc;
 		btsockl.accept(btsocks, true);
-		threads.push_back(std::thread(workerIn, btsocks));
-
 		btsockc.connect(btsockl.getShortId(), btsocks.getRemoteAddress());
-		threads.push_back(std::thread(workerOut, btsockc));
+
+		threads.push_back(std::thread(worker, btsocks, btsockc));
 	}
 
 	char c;
