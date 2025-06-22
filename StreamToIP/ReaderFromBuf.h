@@ -7,7 +7,7 @@
 typedef std::vector<uint8_t> vec;
 
 class ReaderFromBuf : public DS::Stream {
-public:
+	friend class StreamToIP;
 
 	ReaderFromBuf() = default;
 

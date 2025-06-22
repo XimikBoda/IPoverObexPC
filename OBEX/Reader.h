@@ -6,7 +6,9 @@
 #include <ReaderAgent.h>
 
 class Reader : public DS::ReaderAgent {
-public:
+	friend class OBEXClient;
+	friend class OBEXServer;
+
 	size_t read_count = 0;
 
 	Reader() = default;

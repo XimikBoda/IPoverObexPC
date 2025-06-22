@@ -7,7 +7,9 @@
 #include <WriterAgent.h>
 
 class OBEXMakePacket : public DS::WriterAgent {
-public:
+	friend class OBEXClient;
+	friend class OBEXServer;
+
 	vec buf;
 
 	void init(uint8_t id);
