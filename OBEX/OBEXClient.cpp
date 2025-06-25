@@ -135,3 +135,10 @@ void OBEXClient::PutStreamData(vec buf) {
 	if (buf.size() % max_buf_size != 0)
 		makePutPacketAndResponce(vec(buf.begin() + count * max_buf_size, buf.end()));
 }
+
+bool OBEXClient::sdw_write(void* buf, size_t len, size_t& writed) {
+	return true;
+}
+void OBEXClient::sdw_write(std::vector<uint8_t> buf) {
+	PutStreamData(buf);
+}

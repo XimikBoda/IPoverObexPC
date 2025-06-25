@@ -31,7 +31,7 @@ void TCP::connect(std::string addr, uint16_t port, std::function<void(uint8_t)> 
 	if (connect_future.valid())
 		return result(Busy);
 
-	connect_future = std::async(std::launch::async, [&]() {
+	connect_future = std::async(std::launch::async, [addr, port, this, result]() {
 		auto ip = sf::IpAddress::resolve(addr);
 		auto res = sock->connect(ip.value(), port);
 

@@ -21,6 +21,8 @@ void worker(BTSock btsocks, BTSock btsockc) { // TODO make class
 
 	StreamToIP stip;
 	stip.reader.sds_connect(&OBEXs.stream_writer);
+	stip.writer.sdwa_connect(&OBEXc);
+	//stip.writer.sdsa_connect(&OBEXc.stream_reader);
 
 	OBEXc.connet();
 	OBEXc.initPutStream("IpOverObex.txt", 0x7FFFFFFF);
@@ -29,10 +31,6 @@ void worker(BTSock btsocks, BTSock btsockc) { // TODO make class
 
 	std::thread a([&]() { OBEXs.run(); }); // temp 
 	std::thread b([&]() { stip.run(); }); // temp 
-
-
-	std::string str = "Hi from pc\n";
-	OBEXc.PutStreamData(vec(str.begin(), str.end()));
 
 	while (1) {
 		_sleep(10000); // temp

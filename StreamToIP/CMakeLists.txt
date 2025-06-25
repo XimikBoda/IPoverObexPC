@@ -6,6 +6,7 @@ add_library(${PROJECT_NAME} STATIC
     StreamToIP.cpp StreamToIP.h
     TCP.cpp TCP.h
     ReaderFromBuf.cpp ReaderFromBuf.h
+    PacketMaker.cpp PacketMaker.h
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)

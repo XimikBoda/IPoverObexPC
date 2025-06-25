@@ -4,9 +4,11 @@
 #include "Reader.h"
 #include "OBEXMakePacket.h"
 #include "OBEX.h"
+#include <Stream.h>
+#include <Writer.h>
 
 
-class OBEXClient {
+class OBEXClient : public DS::Writer {
 	uint8_t last_pack = 0;
 	uint8_t current_response_pack = 0;
 	uint16_t current_response_pack_size = 0;
@@ -38,8 +40,12 @@ class OBEXClient {
 public:
 	Reader reader;
 	OBEXMakePacket writer;
+	//DS::Stream reader;
 
 	void connet();
 	void initPutStream(std::string name, uint32_t size);
 	void PutStreamData(vec buf);
+
+	bool sdw_write(void* buf, size_t len, size_t& writed) override;
+	void sdw_write(vec buf) override;
 };

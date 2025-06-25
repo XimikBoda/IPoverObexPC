@@ -3,6 +3,7 @@
 #include <map>
 
 #include "ReaderFromBuf.h"
+#include "PacketMaker.h"
 #include "TCP.h"
 
 
@@ -33,5 +34,7 @@ class StreamToIP {
 	void parseTCDisconnectPacket();
 public:
 	ReaderFromBuf reader;
+	PacketMaker writer;
+
 	void run();
 };

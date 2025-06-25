@@ -13,7 +13,12 @@ uint16_t StreamToIP::makeTypeId(uint16_t type, uint16_t id) {
 }
 
 void StreamToIP::makeRspGeneral(uint16_t type_id, uint8_t act, uint8_t rsp) {
-
+	std::lock_guard lg(writer.mutex);
+	writer.init(type_id);
+	writer.putUInt16(type_id);
+	writer.putUInt8(act);
+	writer.putUInt8(rsp);
+	writer.send();
 }
 
 void StreamToIP::parsePacket() {
