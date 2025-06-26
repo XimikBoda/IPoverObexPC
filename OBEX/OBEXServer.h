@@ -11,7 +11,7 @@ class OBEXServer {
 
 	uint8_t version = 0x10;
 	uint8_t flags = 0;
-	uint16_t max_pack_size = 0xFFFF;
+	uint16_t max_pack_size = 0x2800;
 
 	OBEX_States state = Inited;
 

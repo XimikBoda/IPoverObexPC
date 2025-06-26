@@ -15,7 +15,7 @@ class OBEXClient : public DS::Writer {
 
 	uint8_t rversion = 0x10;
 	uint8_t rflags = 0;
-	uint16_t max_pack_size = 0xFFFF;
+	uint16_t max_pack_size = 0x2800;
 
 	void makeConnectPacket();
 	void makeFistPutPacket(std::string name, uint32_t size);
