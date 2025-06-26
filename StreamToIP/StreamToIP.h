@@ -32,6 +32,7 @@ class StreamToIP {
 	void parseTCPPacket();
 	void parseTCPConnectPacket();
 	void parseTCPSendPacket();
+	void parseTCPReceivePacket();
 	void parseTCPDisconnectPacket();
 public:
 	ReaderFromBuf reader;

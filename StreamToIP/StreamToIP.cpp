@@ -12,7 +12,7 @@ uint16_t StreamToIP::makeTypeId(uint16_t type, uint16_t id) {
 	return (type << bits_for_type) | (id & ((1 << bits_for_type) - 1));
 }
 
-void StreamToIP::makeRspGeneral(uint16_t type_id, uint8_t act, uint8_t rsp) {
+void StreamToIP::makeRspGeneral(uint16_t type_id, uint8_t act, uint8_t rsp) { //Do I need this
 	std::lock_guard lg(writer.mutex);
 	writer.init(type_id);
 	writer.putUInt8(act);
@@ -46,6 +46,9 @@ void StreamToIP::parseTCPPacket() {
 	case TCP::Send:
 		parseTCPSendPacket();
 		break;
+	case TCP::Receive:
+		parseTCPReceivePacket();
+		break;
 	case TCP::Disconnect:
 		parseTCPDisconnectPacket();
 		break;
@@ -57,15 +60,20 @@ void StreamToIP::parseTCPPacket() {
 void StreamToIP::parseTCPConnectPacket() {
 	std::string adders = reader.readString();
 	uint16_t port = reader.readUInt16();
+	size_t receive_buf = reader.readVarInt();
 	
-	TCPs[id].connect(adders, port, [this](uint8_t res) {
-		makeRspGeneral(makeTypeId(TCP_T, this->id), TCP::Connect, res);
-		});
+	TCPs[id].init(&writer, makeTypeId(TCP_T, id), receive_buf);
+	TCPs[id].connect(adders, port);
 }
 
 void StreamToIP::parseTCPSendPacket() {
 	vec buf = reader.readVecBlocking(size - 5);
 	TCPs[id].send(buf);
+}
+
+void StreamToIP::parseTCPReceivePacket() {
+	size_t receive = reader.readVarInt();
+	TCPs[id].receive(receive);
 }
 
 void StreamToIP::parseTCPDisconnectPacket() {

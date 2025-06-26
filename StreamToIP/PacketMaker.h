@@ -6,6 +6,7 @@
 
 class PacketMaker : public DS::WriterAgent {
 	friend class StreamToIP;
+	friend class TCP;
 
 	std::mutex mutex;
 
