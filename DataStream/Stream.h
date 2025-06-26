@@ -20,7 +20,8 @@ namespace DataStream {
 
 		void read(void* buf, size_t len, size_t& readed);
 		vec read(size_t len);
-		void sds_write(void* buf, size_t len);
+		vec readAll();
+		void sds_write(const void* buf, size_t len);
 
 		~Stream();
 	};

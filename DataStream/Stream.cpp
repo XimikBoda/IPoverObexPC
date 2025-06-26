@@ -47,7 +47,16 @@ namespace DataStream {
 		return res;
 	}
 
-	void Stream::sds_write(void* buf, size_t len) {
+	vec Stream::readAll() {
+		std::unique_lock lk(sds_mutex);
+
+		std::vector<uint8_t> res = sds_buf;
+		sds_buf.resize(0);
+
+		return res;
+	}
+
+	void Stream::sds_write(const void* buf, size_t len) {
 		std::unique_lock lk(sds_mutex);
 
 		size_t old_len = sds_buf.size();

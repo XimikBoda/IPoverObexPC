@@ -42,6 +42,28 @@ void TCP::connect(std::string addr, uint16_t port, std::function<void(uint8_t)> 
 		});
 }
 
+void TCP::send(const vec& buf) {
+	send_buf.sds_write(buf.data(), buf.size());
+
+	if (send_future.valid())
+		return;
+
+	send_future = std::async(std::launch::async, [this]() {
+		while (true) {
+			if (!connected)
+				return;
+
+			vec buf = send_buf.readAll();
+			if (!buf.size())
+				return;
+
+			auto res = sock->send(buf.data(), buf.size());
+			if (res != sf::Socket::Status::Done)
+				throw std::runtime_error("Some went wrong"); //todo
+		}
+	});
+}
+
 void TCP::disconnect() {
 	sock->disconnect();
 	connected = false;

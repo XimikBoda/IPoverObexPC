@@ -43,8 +43,11 @@ void StreamToIP::parseTCPPacket() {
 	case TCP::Connect:
 		parseTCPConnectPacket();
 		break;
+	case TCP::Send:
+		parseTCPSendPacket();
+		break;
 	case TCP::Disconnect:
-		parseTCDisconnectPacket();
+		parseTCPDisconnectPacket();
 		break;
 	default:
 		break;
@@ -60,10 +63,12 @@ void StreamToIP::parseTCPConnectPacket() {
 		});
 }
 
-void StreamToIP::parseTCDisconnectPacket() {
-	std::string adders = reader.readString();
-	uint16_t port = reader.readUInt16();
+void StreamToIP::parseTCPSendPacket() {
+	vec buf = reader.readVecBlocking(size - 5);
+	TCPs[id].send(buf);
+}
 
+void StreamToIP::parseTCPDisconnectPacket() {
 	TCPs[id].disconnect();
 }
 
