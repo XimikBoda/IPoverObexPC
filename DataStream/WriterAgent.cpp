@@ -23,18 +23,18 @@ namespace DS {
 		}
 	}
 
-	bool WriterAgent::write(void* buf, size_t len, size_t& writed){
+	ssize_t WriterAgent::write(const void* buf, size_t len){
 		if (!sdwa_p)
-			return false;
+			return -1; //TODO
 
-		return sdwa_p->sdw_write(buf, len, writed);
+		return sdwa_p->write(buf, len);
 	}
 
-	void WriterAgent::write(std::vector<uint8_t> buf) {
+	ssize_t WriterAgent::write(const vec &buf) {
 		if (!sdwa_p)
-			return;
+			return -1;
 
-		return sdwa_p->sdw_write(buf);
+		return sdwa_p->write(buf);
 	}
 
 	WriterAgent::~WriterAgent() {

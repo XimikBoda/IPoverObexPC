@@ -27,4 +27,5 @@ namespace DS {
 		sdw_close();
 	}
 
+	void Writer::setWriteBlocking(DS::AccessMode mode) {}
 }

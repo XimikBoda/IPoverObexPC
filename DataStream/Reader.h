@@ -8,10 +8,11 @@ namespace DS {
 		bool sdr_connect(class ReaderAgent* sdr_agent, bool connect_both = false);
 		void sdr_close(bool close_both = true);
 
-		virtual bool sdr_read(void* buf, size_t len, size_t& readed) = 0;
-		virtual vec sdr_read(size_t len) = 0;
+		virtual void setReadBlocking(DS::AccessMode mode) = 0;
+
+		virtual ssize_t read(void* buf, size_t len) = 0;
+		virtual const vec& read(size_t len) = 0;
 
 		~Reader();
 	};
-
 };

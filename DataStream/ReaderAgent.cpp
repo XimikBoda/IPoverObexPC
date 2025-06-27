@@ -23,18 +23,18 @@ namespace DS {
 		}
 	}
 
-	bool ReaderAgent::read(void* buf, size_t len, size_t& readed){
+	ssize_t ReaderAgent::read(void* buf, size_t len){
 		if (!sdra_p)
-			return false;
+			return -1;
 
-		return sdra_p->sdr_read(buf, len, readed);
+		return sdra_p->read(buf, len);
 	}
 
-	std::vector<uint8_t> ReaderAgent::read(size_t len) {
+	const vec &ReaderAgent::read(size_t len) {
 		if (!sdra_p)
 			return {};
 
-		return sdra_p->sdr_read(len);
+		return sdra_p->read(len);
 	}
 
 	ReaderAgent::~ReaderAgent() {

@@ -46,6 +46,6 @@ public:
 	void initPutStream(std::string name, uint32_t size);
 	void PutStreamData(vec buf);
 
-	bool sdw_write(void* buf, size_t len, size_t& writed) override;
-	void sdw_write(vec buf) override;
+	ssize_t write(const void* buf, size_t len) override;
+	ssize_t write(const vec &buf) override;
 };
