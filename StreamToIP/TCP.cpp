@@ -150,7 +150,8 @@ void TCP::receive(size_t received) {
 }
 
 void TCP::disconnect() {
-	sock->disconnect();
 	connected = false;
+	connect_thread_cv.notify_one();
+	sock->disconnect();
 }
 
