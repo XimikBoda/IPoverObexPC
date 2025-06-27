@@ -2,6 +2,7 @@
 #include "Reader.h"
 
 namespace DS {
+	const vec null_vec = {};
 
 	bool ReaderAgent::sdra_connect(Reader* sdra_p, bool connect_both) {
 		if (this->sdra_p)
@@ -23,16 +24,23 @@ namespace DS {
 		}
 	}
 
-	ssize_t ReaderAgent::read(void* buf, size_t len){
+	void ReaderAgent::setReadBlocking(DS::AccessMode mode) {
+		if (!sdra_p)
+			return;
+
+		sdra_p->setReadBlocking(mode);
+	}
+
+	ssize_t ReaderAgent::read(void* buf, size_t len) {
 		if (!sdra_p)
 			return -1;
 
 		return sdra_p->read(buf, len);
 	}
 
-	const vec &ReaderAgent::read(size_t len) {
+	const vec& ReaderAgent::read(size_t len) {
 		if (!sdra_p)
-			return {};
+			return null_vec;
 
 		return sdra_p->read(len);
 	}

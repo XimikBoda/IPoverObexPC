@@ -23,14 +23,21 @@ namespace DS {
 		}
 	}
 
-	ssize_t WriterAgent::write(const void* buf, size_t len){
+	void WriterAgent::setWriteBlocking(DS::AccessMode mode) {
+		if (!sdwa_p)
+			return;
+
+		sdwa_p->setWriteBlocking(mode);
+	}
+
+	ssize_t WriterAgent::write(const void* buf, size_t len) {
 		if (!sdwa_p)
 			return -1; //TODO
 
 		return sdwa_p->write(buf, len);
 	}
 
-	ssize_t WriterAgent::write(const vec &buf) {
+	ssize_t WriterAgent::write(const vec& buf) {
 		if (!sdwa_p)
 			return -1;
 

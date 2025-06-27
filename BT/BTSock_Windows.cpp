@@ -64,7 +64,7 @@ void BTSock::setReadBlocking(DS::AccessMode mode) {
 	if (read_mode == DS::AccessMode::NonBlocking)
 		if (mode != DS::AccessMode::NonBlocking)
 			if (read_operation) {
-				read_operation->get();
+				read_operation->get(); //TODO
 				read_operation.reset();
 			}
 
@@ -126,26 +126,27 @@ ssize_t BTSock::read(void* buf, size_t len) {
 const vec& BTSock::read(size_t len) {
 	static thread_local vec res;
 
-	if (len == 0)
-		return {};
-
 	res.resize(len);
-	read(res.data(), len);;
+	if (len)
+		read(res.data(), len);
+
 	return res;
 }
 
 ssize_t BTSock::write(const void* buf, size_t len) {
 	if (!len)
 		return 0;
+
 	return write(vec((uint8_t*)buf, (uint8_t*)buf + len));
 }
 
 ssize_t BTSock::write(const vec& buf) {
-	writer.WriteBytes(buf);
 	if (!buf.size())
 		return 0;
 
-	writer.StoreAsync().get();
+	writer.WriteBytes(buf);
+
+	writer.StoreAsync().get(); //TODO: add notblocking
 	return buf.size();
 }
 
