@@ -1,7 +1,7 @@
 #include "WriterAgent.h"
 #include "Writer.h"
 
-namespace DataStream {
+namespace DS {
 
 	bool WriterAgent::sdwa_connect(Writer* sdwa_p, bool connect_both) {
 		if (this->sdwa_p)

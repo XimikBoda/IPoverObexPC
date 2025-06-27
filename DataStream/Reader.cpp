@@ -1,7 +1,7 @@
 #include "Reader.h"
 #include "ReaderAgent.h"
 
-namespace DataStream {
+namespace DS {
 
 	bool Reader::sdr_connect(ReaderAgent* sdr_agent, bool connect_both) {
 		if (this->sdr_agent)

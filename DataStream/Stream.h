@@ -3,7 +3,7 @@
 #include <mutex>
 #include <condition_variable>
 
-namespace DataStream {
+namespace DS {
 	typedef class StreamAgent;
 
 	class Stream {

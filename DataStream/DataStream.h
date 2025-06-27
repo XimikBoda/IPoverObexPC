@@ -3,8 +3,6 @@
 
 typedef std::vector<uint8_t> vec;
 
-namespace DataStream {
+namespace DS {
 
 };
-
-namespace DS = DataStream;

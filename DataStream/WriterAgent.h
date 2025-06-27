@@ -1,7 +1,7 @@
 #pragma once
 #include "DataStream.h"
 
-namespace DataStream {
+namespace DS {
 	typedef class Writer;
 
 	class WriterAgent {

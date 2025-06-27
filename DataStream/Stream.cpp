@@ -1,7 +1,7 @@
 #include "Stream.h"
 #include "StreamAgent.h"
 
-namespace DataStream {
+namespace DS {
 
 	bool Stream::sds_connect(StreamAgent* sds_agent, bool connect_both) {
 		if (this->sds_agent)
