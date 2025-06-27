@@ -13,7 +13,8 @@ class Reader : public DS::ReaderAgent {
 
 	Reader() = default;
 
-	vec readVecBlocking(size_t len);
+	const vec& readVecBlocking(size_t len);
+	const vec& readVecPartial(size_t len);
 	uint8_t readUInt8();
 	uint16_t readUInt16();
 	uint32_t readUInt32();

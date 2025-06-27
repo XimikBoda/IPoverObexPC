@@ -23,14 +23,14 @@ namespace DS {
 		}
 	}
 
-	void StreamAgent::write(void* buf, size_t len) {
+	void StreamAgent::write(const void* buf, size_t len) {
 		if (!sdsa_p)
 			return;
 
 		return sdsa_p->sds_write(buf, len);
 	}
 
-	void StreamAgent::write(vec &buf) {
+	void StreamAgent::write(const vec &buf) {
 		write(buf.data(), buf.size());
 	}
 

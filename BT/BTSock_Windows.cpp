@@ -151,4 +151,3 @@ ssize_t BTSock::write(const vec& buf) {
 }
 
 #endif // WIN32
-
