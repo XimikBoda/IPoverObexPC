@@ -61,12 +61,12 @@ BTAddress BTSock::getRemoteAddress() {
 }
 
 void BTSock::setReadBlocking(DS::AccessMode mode) {
-	if (read_mode == DS::AccessMode::NonBlocking)
-		if (mode != DS::AccessMode::NonBlocking)
-			if (read_operation) {
-				read_operation->get(); //TODO
-				read_operation.reset();
-			}
+	//if (read_mode == DS::AccessMode::NonBlocking)
+	//	if (mode != DS::AccessMode::NonBlocking)
+	//		if (read_operation) {
+	//			read_operation->get(); //TODO
+	//			read_operation.reset();
+	//		}
 
 	reader.InputStreamOptions(mode == DS::Blocking ?
 		InputStreamOptions::ReadAhead : InputStreamOptions::Partial);
@@ -84,7 +84,7 @@ ssize_t BTSock::readReadyData(void* buf, size_t len) {
 	return readed.Length();
 }
 
-ssize_t BTSock::readNotBlocking(void* buf, size_t len) {
+/*ssize_t BTSock::readNotBlocking(void* buf, size_t len) {
 	if (read_operation)
 		if (read_operation->Status() == AsyncStatus::Completed)
 			read_operation.reset();
@@ -103,19 +103,29 @@ ssize_t BTSock::readNotBlocking(void* buf, size_t len) {
 		read_operation = std::make_shared<DataReaderLoadOperation>(reader.LoadAsync(lack_of_size));
 
 	return 0;
-}
+}*/
 
 ssize_t BTSock::read(void* buf, size_t len) {
-	if (read_mode == DS::NonBlocking)
-		return readNotBlocking(buf, len);
+	if (!len)
+		return 0;
+
+	//if (read_mode == DS::NonBlocking)
+	//	return readNotBlocking(buf, len);
 
 	size_t available_size = reader.UnconsumedBufferLength();
 	size_t lack_of_size = len > available_size ? len - available_size : 0;
+
+	printf("b available_size %d\n", (int)available_size);
 
 	if (lack_of_size && (read_mode == DS::Blocking || available_size == 0))
 		reader.LoadAsync(lack_of_size).get();
 
 	available_size = reader.UnconsumedBufferLength();
+
+	if (!available_size)
+		throw DS::DataException();
+
+	printf("a available_size %d\n", (int)available_size);
 
 	if (len > available_size)
 		len = available_size;
@@ -127,9 +137,10 @@ const vec& BTSock::read(size_t len) {
 	static thread_local vec res;
 
 	res.resize(len);
-	if (len)
-		read(res.data(), len);
-
+	if (len) {
+		auto readed = read(res.data(), len);
+		res.resize(readed);
+	}
 	return res;
 }
 
@@ -146,7 +157,16 @@ ssize_t BTSock::write(const vec& buf) {
 
 	writer.WriteBytes(buf);
 
-	writer.StoreAsync().get(); //TODO: add notblocking
+	try {
+		writer.StoreAsync().get(); 
+	}
+	catch (const winrt::hresult_error& e) {
+		std::wcerr << L"WinRT error: " << e.message().c_str() << L" HRESULT: " << std::hex << e.code() << std::endl;
+		throw DS::DataException();
+	}
+	catch (...) {
+		throw DS::DataException();
+	}
 	return buf.size();
 }
 

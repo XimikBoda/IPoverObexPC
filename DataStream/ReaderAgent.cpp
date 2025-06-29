@@ -33,14 +33,14 @@ namespace DS {
 
 	ssize_t ReaderAgent::read(void* buf, size_t len) {
 		if (!sdra_p)
-			return -1;
+			throw DS::DataException();
 
 		return sdra_p->read(buf, len);
 	}
 
 	const vec& ReaderAgent::read(size_t len) {
 		if (!sdra_p)
-			return null_vec;
+			throw DS::DataException();
 
 		return sdra_p->read(len);
 	}

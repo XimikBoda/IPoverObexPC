@@ -15,4 +15,10 @@ namespace DS {
 		BlockingPartial,
 		Blocking
 	};
+
+    class DataException : public std::exception {
+    private:
+    public:
+        DataException() = default;
+    };
 };
