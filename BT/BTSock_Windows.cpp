@@ -38,8 +38,7 @@ BTSock::BTSock(StreamSocket& sock) :
 	reader.InputStreamOptions(InputStreamOptions::ReadAhead);
 }
 
-bool BTSock::connect(uint16_t id, BTAddress addr)
-{
+bool BTSock::connect(uint16_t id, BTAddress addr) {
 	RfcommServiceId serviceId = RfcommServiceId::FromShortId(id);
 	device = BluetoothDevice::FromBluetoothAddressAsync(addr.toUInt64()).get();
 	if (!device)
@@ -57,65 +56,118 @@ bool BTSock::connect(uint16_t id, BTAddress addr)
 	*this = BTSock(sock);
 }
 
-BTAddress BTSock::getRemoteAddress()
-{
+BTAddress BTSock::getRemoteAddress() {
 	return BTAddress(device.BluetoothAddress());
 }
 
-size_t BTSock::read(void* buf, size_t len)
-{
-	size_t available_size = reader.UnconsumedBufferLength();
-	if (len > available_size)
-		reader.LoadAsync(len - available_size).get();
+void BTSock::setReadBlocking(DS::AccessMode mode) {
+	//if (read_mode == DS::AccessMode::NonBlocking)
+	//	if (mode != DS::AccessMode::NonBlocking)
+	//		if (read_operation) {
+	//			read_operation->get(); //TODO
+	//			read_operation.reset();
+	//		}
 
-	auto readed = reader.ReadBuffer(len);
-	memcpy(buf, readed.data(), readed.Length());
-	return size_t(readed.Length());
+	reader.InputStreamOptions(mode == DS::Blocking ?
+		InputStreamOptions::ReadAhead : InputStreamOptions::Partial);
+
+	read_mode = mode;
 }
 
-std::vector<uint8_t> BTSock::read(size_t len)
-{
-	if (len == 0)
-		return {};
-	std::vector<uint8_t> res;
+void BTSock::setWriteBlocking(DS::AccessMode mode) {
+	write_mode = mode;
+}
+
+ssize_t BTSock::readReadyData(void* buf, size_t len) {
+	auto readed = reader.ReadBuffer(len);
+	memcpy(buf, readed.data(), readed.Length());
+	return readed.Length();
+}
+
+/*ssize_t BTSock::readNotBlocking(void* buf, size_t len) {
+	if (read_operation)
+		if (read_operation->Status() == AsyncStatus::Completed)
+			read_operation.reset();
+
+	size_t available_size = reader.UnconsumedBufferLength();
+	size_t lack_of_size = len > available_size ? len - available_size : 0;
+
+	if (available_size) {
+		if (len > available_size)
+			len = available_size;
+
+		return readReadyData(buf, len);
+	}
+
+	if (!read_operation)
+		read_operation = std::make_shared<DataReaderLoadOperation>(reader.LoadAsync(lack_of_size));
+
+	return 0;
+}*/
+
+ssize_t BTSock::read(void* buf, size_t len) {
+	if (!len)
+		return 0;
+
+	//if (read_mode == DS::NonBlocking)
+	//	return readNotBlocking(buf, len);
+
+	size_t available_size = reader.UnconsumedBufferLength();
+	size_t lack_of_size = len > available_size ? len - available_size : 0;
+
+	printf("b available_size %d\n", (int)available_size);
+
+	if (lack_of_size && (read_mode == DS::Blocking || available_size == 0))
+		reader.LoadAsync(lack_of_size).get();
+
+	available_size = reader.UnconsumedBufferLength();
+
+	if (!available_size)
+		throw DS::DataException();
+
+	printf("a available_size %d\n", (int)available_size);
+
+	if (len > available_size)
+		len = available_size;
+
+	return readReadyData(buf, len);
+}
+
+const vec& BTSock::read(size_t len) {
+	static thread_local vec res;
+
 	res.resize(len);
-	read(res.data(), len);;
+	if (len) {
+		auto readed = read(res.data(), len);
+		res.resize(readed);
+	}
 	return res;
 }
 
-size_t BTSock::write(void* buf, size_t len)
-{
+ssize_t BTSock::write(const void* buf, size_t len) {
 	if (!len)
 		return 0;
-	return write(std::vector<uint8_t>((uint8_t*)buf, (uint8_t*)buf + len));
+
+	return write(vec((uint8_t*)buf, (uint8_t*)buf + len));
 }
 
-size_t BTSock::write(std::vector<uint8_t> buf)
-{
-	writer.WriteBytes(buf);
+ssize_t BTSock::write(const vec& buf) {
 	if (!buf.size())
 		return 0;
 
-	writer.StoreAsync().get();
+	writer.WriteBytes(buf);
+
+	try {
+		writer.StoreAsync().get(); 
+	}
+	catch (const winrt::hresult_error& e) {
+		std::wcerr << L"WinRT error: " << e.message().c_str() << L" HRESULT: " << std::hex << e.code() << std::endl;
+		throw DS::DataException();
+	}
+	catch (...) {
+		throw DS::DataException();
+	}
 	return buf.size();
 }
 
-bool BTSock::sdr_read(void* buf, size_t len, size_t& readed) {
-	readed = read(buf, len);
-	return true;
-}
-
-std::vector<uint8_t> BTSock::sdr_read(size_t len) {
-	return read(len);
-}
-
-bool BTSock::sdw_write(void* buf, size_t len, size_t& writed) {
-	writed = write(buf, len);
-	return true;
-}
-void BTSock::sdw_write(std::vector<uint8_t> buf) {
-	write(buf);
-}
-
 #endif // WIN32
-

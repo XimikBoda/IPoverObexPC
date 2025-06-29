@@ -1,7 +1,7 @@
 #include "Writer.h"
 #include "WriterAgent.h"
 
-namespace DataStream {
+namespace DS {
 
 	bool Writer::sdw_connect(WriterAgent* sdw_agent, bool connect_both) {
 		if (this->sdw_agent)
@@ -27,4 +27,5 @@ namespace DataStream {
 		sdw_close();
 	}
 
+	void Writer::setWriteBlocking(DS::AccessMode mode) {}
 }

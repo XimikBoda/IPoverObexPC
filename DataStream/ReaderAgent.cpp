@@ -1,7 +1,8 @@
 #include "ReaderAgent.h"
 #include "Reader.h"
 
-namespace DataStream {
+namespace DS {
+	const vec null_vec = {};
 
 	bool ReaderAgent::sdra_connect(Reader* sdra_p, bool connect_both) {
 		if (this->sdra_p)
@@ -23,18 +24,25 @@ namespace DataStream {
 		}
 	}
 
-	bool ReaderAgent::read(void* buf, size_t len, size_t& readed){
+	void ReaderAgent::setReadBlocking(DS::AccessMode mode) {
 		if (!sdra_p)
-			return false;
+			return;
 
-		return sdra_p->sdr_read(buf, len, readed);
+		sdra_p->setReadBlocking(mode);
 	}
 
-	std::vector<uint8_t> ReaderAgent::read(size_t len) {
+	ssize_t ReaderAgent::read(void* buf, size_t len) {
 		if (!sdra_p)
-			return {};
+			throw DS::DataException();
 
-		return sdra_p->sdr_read(len);
+		return sdra_p->read(buf, len);
+	}
+
+	const vec& ReaderAgent::read(size_t len) {
+		if (!sdra_p)
+			throw DS::DataException();
+
+		return sdra_p->read(len);
 	}
 
 	ReaderAgent::~ReaderAgent() {

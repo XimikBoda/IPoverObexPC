@@ -1,7 +1,7 @@
 #include "WriterAgent.h"
 #include "Writer.h"
 
-namespace DataStream {
+namespace DS {
 
 	bool WriterAgent::sdwa_connect(Writer* sdwa_p, bool connect_both) {
 		if (this->sdwa_p)
@@ -23,18 +23,25 @@ namespace DataStream {
 		}
 	}
 
-	bool WriterAgent::write(void* buf, size_t len, size_t& writed){
-		if (!sdwa_p)
-			return false;
-
-		return sdwa_p->sdw_write(buf, len, writed);
-	}
-
-	void WriterAgent::write(std::vector<uint8_t> buf) {
+	void WriterAgent::setWriteBlocking(DS::AccessMode mode) {
 		if (!sdwa_p)
 			return;
 
-		return sdwa_p->sdw_write(buf);
+		sdwa_p->setWriteBlocking(mode);
+	}
+
+	ssize_t WriterAgent::write(const void* buf, size_t len) {
+		if (!sdwa_p)
+			throw DS::DataException();
+
+		return sdwa_p->write(buf, len);
+	}
+
+	ssize_t WriterAgent::write(const vec& buf) {
+		if (!sdwa_p)
+			throw DS::DataException();
+
+		return sdwa_p->write(buf);
 	}
 
 	WriterAgent::~WriterAgent() {

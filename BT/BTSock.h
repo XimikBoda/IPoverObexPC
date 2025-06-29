@@ -25,12 +25,21 @@ class BTSock : public DS::Reader, public DS::Writer {
 	StreamSocket sock;
 	BluetoothDevice device;
 
-	DataWriter writer;
 	DataReader reader;
+	DataWriter writer;
 #elif __unix__
 	sdbus::UnixFd socket_fd;
 	BTAddress remote_addr;
 #endif 
+
+	DS::AccessMode read_mode = DS::Blocking;
+	DS::AccessMode write_mode = DS::Blocking;
+
+	ssize_t readReadyData(void* buf, size_t len);
+	//ssize_t readNotBlocking(void* buf, size_t len);
+
+	//std::shared_ptr<DataReaderLoadOperation> read_operation;
+
 public:
 	BTSock();
 
@@ -44,14 +53,12 @@ public:
 
 	BTAddress getRemoteAddress();
 
-	size_t read(void* buf, size_t len);
-	vec read(size_t len);
-	size_t write(void* buf, size_t len);
-	size_t write(vec buf);
+	void setReadBlocking(DS::AccessMode mode) override;
+	void setWriteBlocking(DS::AccessMode mode) override;
 
-	bool BTSock::sdr_read(void* buf, size_t len, size_t& readed) override;
-	vec sdr_read(size_t len) override;
-	bool sdw_write(void* buf, size_t len, size_t& writed) override;
-	void sdw_write(vec buf) override;
+	ssize_t read(void* buf, size_t len) override;
+	const vec& read(size_t len) override;
+	ssize_t write(const void* buf, size_t len) override;
+	ssize_t write(const vec& buf) override;
 };
 

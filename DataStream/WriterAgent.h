@@ -1,17 +1,17 @@
 #pragma once
 #include "DataStream.h"
 
-namespace DataStream {
-	typedef class Writer;
-
+namespace DS {
 	class WriterAgent {
-		Writer* sdwa_p = nullptr;
+		class Writer* sdwa_p = nullptr;
 	public:
-		bool sdwa_connect(Writer* sdwa_p, bool connect_both = false);
+		bool sdwa_connect(class Writer* sdwa_p, bool connect_both = false);
 		void sdwa_close(bool close_both = true);
 
-		bool write(void* buf, size_t len, size_t& writed);
-		void write(vec buf);
+		void setWriteBlocking(DS::AccessMode mode);
+
+		ssize_t write(const void* buf, size_t len);
+		ssize_t write(const vec &buf);
 
 		~WriterAgent();
 	};

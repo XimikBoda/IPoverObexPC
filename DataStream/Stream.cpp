@@ -1,7 +1,7 @@
 #include "Stream.h"
 #include "StreamAgent.h"
 
-namespace DataStream {
+namespace DS {
 
 	bool Stream::sds_connect(StreamAgent* sds_agent, bool connect_both) {
 		if (this->sds_agent)
@@ -23,26 +23,40 @@ namespace DataStream {
 		}
 	}
 
-	void Stream::read(void* buf, size_t len, size_t& readed) {
+	ssize_t Stream::read(void* buf, size_t len, DS::AccessMode mode) {
 		std::unique_lock lk(sds_mutex);
 
-		if (sds_buf.size() < len) 
-			sds_cv.wait(lk, [&] { return sds_buf.size() >= len; });
-		
-		readed = len;
-		memcpy(buf, sds_buf.data(), len);
-		memmove(sds_buf.data(), sds_buf.data() + len, sds_buf.size() - len);
-		sds_buf.resize(sds_buf.size() - len);
+		size_t available_size = sds_buf.size();
+		size_t lack_of_size = len > available_size ? len - available_size : 0;
+
+		if (mode == DS::Blocking) {
+			if (lack_of_size) sds_cv.wait(lk, [&] { return sds_buf.size() >= len; });
+		}
+		else if (mode == DS::BlockingPartial) {
+			if (!available_size) sds_cv.wait(lk, [&] { return sds_buf.size(); });
+		}
+
+		available_size = sds_buf.size();
+
+		if (available_size) {
+			memcpy(buf, sds_buf.data(), len);
+			memmove(sds_buf.data(), sds_buf.data() + len, sds_buf.size() - len);
+
+			sds_buf.resize(sds_buf.size() - len);
+		}
+
+		return available_size;
 	}
 
-	vec Stream::read(size_t len) {
-		if (len == 0)
-			return {};
-		std::vector<uint8_t> res;
-		size_t readed = 0;
+	const vec& Stream::read(size_t len, DS::AccessMode mode) {
+		static thread_local vec res;
 
 		res.resize(len);
-		read(res.data(), len, readed);
+
+		if (len) {
+			ssize_t readed = read(res.data(), len, mode);
+			res.resize(readed);
+		}
 
 		return res;
 	}

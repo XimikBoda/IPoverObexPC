@@ -3,22 +3,22 @@
 static const int SEGMENT_BITS = 0x7F;
 static const int CONTINUE_BIT = 0x80;
 
-vec ReaderFromBuf::readVecBlocking(size_t len) {
-	return read(len);
+const vec& ReaderFromBuf::readVecBlocking(size_t len) {
+	return read(len, DS::Blocking);
 }
 
 uint8_t ReaderFromBuf::readUInt8() {
-	auto buf = readVecBlocking(1);
+	const auto& buf = readVecBlocking(1);
 	return buf[0];
 }
 
 uint16_t ReaderFromBuf::readUInt16() {
-	auto buf = readVecBlocking(2);
+	const auto& buf = readVecBlocking(2);
 	return (buf[1] << 8) | buf[0];
 }
 
 uint32_t ReaderFromBuf::readUInt32() {
-	auto buf = readVecBlocking(4);
+	const auto& buf = readVecBlocking(4);
 	return (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
 }
 
@@ -41,7 +41,7 @@ uint32_t ReaderFromBuf::readVarInt() {
 
 std::string ReaderFromBuf::readString() {
 	uint32_t len = readVarInt();
-	auto buf = readVecBlocking(len);
+	const auto& buf = readVecBlocking(len);
 
 	return std::string(buf.begin(), buf.end());
 }

@@ -1,18 +1,16 @@
 #pragma once
 #include "DataStream.h"
 
-namespace DataStream {
-	typedef class Stream;
-
+namespace DS {
 	class StreamAgent {
-		Stream* sdsa_p = nullptr;
+		class Stream* sdsa_p = nullptr;
 	public:
-		bool sdsa_connect(Stream* sdsa_p, bool connect_both = true);
+		bool sdsa_connect(class Stream* sdsa_p, bool connect_both = true);
 		void sdsa_close(bool close_both = true);
 
 
-		void write(void* buf, size_t len);
-		void write(vec &buf);
+		void write(const void* buf, size_t len);
+		void write(const vec &buf);
 
 		~StreamAgent();
 	};

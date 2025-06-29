@@ -96,8 +96,12 @@ void OBEXServer::readHeader() {
 
 void OBEXServer::readStream() {
 	uint16_t size = reader.readUInt16() - 3;
-	vec buf = reader.readVecBlocking(size);
-	stream_writer.write(buf);
+
+	for (uint16_t psize = 0; psize < size;) {
+		const vec &buf = reader.readVecPartial(size);
+		stream_writer.write(buf);
+		psize += buf.size();
+	}
 }
 
 void OBEXServer::makeConnectSuccessResponse() {
