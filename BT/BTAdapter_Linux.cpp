@@ -4,8 +4,6 @@
 
 #include <sdbus-c++/sdbus-c++.h>
 #include <iostream>
-#include <codecvt>
-#include <locale>
 
 
 BTAdapter::BTAdapter() {
@@ -37,12 +35,16 @@ bool BTAdapter::setOn(bool on) {
 }
 
 BTAddress BTAdapter::getAddress() {
+	std::string name = adapterProxy->getProperty("Address").
+		onInterface("org.bluez.Adapter1").get<std::string>();
+	return BTAddress();
 }
 
 std::string BTAdapter::getName() {
-}
+	std::string name = adapterProxy->getProperty("Name").
+		onInterface("org.bluez.Adapter1").get<std::string>();
 
-std::wstring BTAdapter::getWName() {
+	return name;
 }
 
 #endif

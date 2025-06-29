@@ -1,5 +1,6 @@
 #include "BTAddress.h"
 #include <codecvt>
+#include <locale>
 
 #ifdef WIN32
 #include <winrt/base.h>
@@ -8,7 +9,12 @@
 
 using namespace winrt;
 using namespace Windows::Devices::Bluetooth;
-#endif 
+#elif __unix__
+#include <sdbus-c++/sdbus-c++.h>
+#include "BluezProfile.h"
+#endif
+
+using namespace std::string_literals;
 
 BTAddress::BTAddress(uint64_t val) {
 	fromUInt64(val);
@@ -48,19 +54,13 @@ void BTAddress::fromArray(uint8_t mac[MAC_LEN]) {
 std::string BTAddress::getName() {
 	static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 
-	return converter.to_bytes(getWName());
-}
-
-std::wstring BTAddress::getWName() {
 	auto device = BluetoothDevice::FromBluetoothAddressAsync(toUInt64()).get();
 	if (!device)
-		return L"No name";
+		return "No name";
 
-	return device.Name().c_str();
+	return converter.to_bytes(device.Name().c_str());
 }
-#endif 
-
-#ifdef __unix__
+#elif __unix__
 BTAddress::BTAddress(bdaddr_t adr) {
 	from_bdaddr(adr);
 }
@@ -78,4 +78,16 @@ std::string BTAddress::toDBusString() {
 		mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 	return std::string(str);
 }
+
+std::string BTAddress::getName() {
+	auto deviceProxy = sdbus::createProxy(BluezProfile::getBusConnection(),
+		sdbus::ServiceName("org.bluez"),
+		sdbus::ObjectPath("/org/bluez/hci0/"s + toDBusString()));
+
+	std::string name = deviceProxy->getProperty("Name").
+		onInterface("org.bluez.Device1").get<std::string>();
+
+	return name;
+}
+
 #endif

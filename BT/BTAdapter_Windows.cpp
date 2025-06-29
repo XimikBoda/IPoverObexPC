@@ -38,11 +38,7 @@ BTAddress BTAdapter::getAddress() {
 std::string BTAdapter::getName() {
 	static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 
-	return converter.to_bytes(getWName());
-}
-
-std::wstring BTAdapter::getWName() {
-	return radio->Name().c_str(); // return "Bluetooth". Should I try BluetoothGetRadioInfo?
+	return converter.to_bytes(radio->Name().c_str());
 }
 
 #endif

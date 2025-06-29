@@ -29,5 +29,4 @@ public:
 
 	BTAddress getAddress();
 	std::string getName();
-	std::wstring getWName();
 };

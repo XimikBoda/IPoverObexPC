@@ -1,3 +1,6 @@
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include <iostream>
 #include <string>
 #include <thread>
@@ -11,10 +14,8 @@ uint16_t obex_id = 0x1105;
 
 void worker(BTSock btsocks, BTSock btsockc) { // TODO make class
 	auto mac = btsocks.getRemoteAddress().toString();
-	auto name = btsocks.getRemoteAddress().getWName();
-	std::cout << "Connected: ";
-	std::wcout << name;
-	std::cout << " (" << mac << ")\n";
+	auto name = btsocks.getRemoteAddress().getName();
+	std::cout << "Connected: " << name << " (" << mac << ")\n";
 
 	OBEXServer OBEXs;
 	OBEXs.reader.sdra_connect(&btsocks);
@@ -55,8 +56,9 @@ void wait_any_key_to_exit() {
 }
 
 int main() {
-	std::locale::global(std::locale(""));
-	std::ios::sync_with_stdio(false);
+#ifdef WIN32
+	SetConsoleOutputCP(CP_UTF8);
+#endif
 
 	BTAdapter adapter;
 	if (!adapter.isThere()) {
@@ -76,6 +78,7 @@ int main() {
 		}
 	}
 
+	std::cout << "BT name: " << adapter.getName() << '\n';
 	std::cout << "BT mac: " << adapter.getAddress().toString() << "\n";
 
 	BTSockListener btsockl;
