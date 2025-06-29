@@ -44,14 +44,24 @@ void worker(BTSock btsocks, BTSock btsockc) { // TODO make class
 
 std::vector<std::thread> threads;
 
+void wait_any_key_to_exit() {
+#ifdef WIN32
+	char c;
+	std::cout << "Press any key to exit\n";
+	std::cin >> c;
+#endif
+
+	exit(0);
+}
+
 int main() {
 	std::locale::global(std::locale(""));
 	std::ios::sync_with_stdio(false);
 
 	BTAdapter adapter;
 	if (!adapter.isThere()) {
-		std::cout << "BT adapter not found\n";
-		return 0;
+		std::cout << "BT adapter not found\n"; 
+		wait_any_key_to_exit();
 	}
 
 	if (!adapter.isOn()) {
@@ -62,7 +72,7 @@ int main() {
 		else {
 			std::cout << "not allowed\n";
 			std::cout << "Turn on BT and try again\n";
-			return 0;
+			wait_any_key_to_exit();
 		}
 	}
 
@@ -78,6 +88,5 @@ int main() {
 		threads.push_back(std::thread(worker, btsocks, btsockc));
 	}
 
-	char c;
-	std::cin >> c;
+	wait_any_key_to_exit();
 }
