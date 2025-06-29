@@ -14,8 +14,11 @@ class StreamToIP {
 		TCP_T
 	};
 
-
 	std::map<uint16_t, TCP> TCPs;
+
+	bool running = true;
+
+	std::shared_ptr<std::thread> worker_thr;
 
 	uint32_t size;
 	uint16_t type;
@@ -34,9 +37,14 @@ class StreamToIP {
 	void parseTCPSendPacket();
 	void parseTCPReceivePacket();
 	void parseTCPDisconnectPacket();
+
+	void worker();
 public:
 	ReaderFromBuf reader;
 	PacketMaker writer;
 
 	void run();
+	void wait();
+
+	~StreamToIP();
 };

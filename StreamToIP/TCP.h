@@ -60,4 +60,6 @@ public:
 	void receive(size_t received);
 
 	void disconnect();
+
+	~TCP();
 };

@@ -1,10 +1,9 @@
 #pragma once
-//#include <StreamAgent.h>
-#include <WriterAgent.h> // temp
+#include <StreamAgent.h>
 #include <string>
 #include <mutex>
 
-class PacketMaker : public DS::WriterAgent {
+class PacketMaker : public DS::StreamAgent {
 	friend class StreamToIP;
 	friend class TCP;
 

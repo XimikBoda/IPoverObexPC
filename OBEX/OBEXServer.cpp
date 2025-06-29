@@ -98,7 +98,7 @@ void OBEXServer::readStream() {
 	uint16_t size = reader.readUInt16() - 3;
 
 	for (uint16_t psize = 0; psize < size;) {
-		const vec &buf = reader.readVecPartial(size);
+		const vec& buf = reader.readVecPartial(size);
 		stream_writer.write(buf);
 		psize += buf.size();
 	}
@@ -132,10 +132,31 @@ void OBEXServer::skipPacketToEnd() {
 	current_pack = 0;
 }
 
-void OBEXServer::run()
-{
-	while (state != Disconected) {
-		getPacketType();
-		readPacket();
+void OBEXServer::worker() {
+	try {
+		while (state != Disconected) {
+			getPacketType();
+			readPacket();
+		}
 	}
+	catch (const DS::DataException& err) {}
+
+	stream_writer.sdsa_close();
+	reader.sdra_close();
+	writer.sdwa_close();
+}
+
+void OBEXServer::run() {
+	if (!worker_thr)
+		worker_thr = std::make_unique<std::thread>(&OBEXServer::worker, this);
+}
+
+void OBEXServer::wait() {
+	if (worker_thr && worker_thr->joinable())
+		worker_thr->join();
+}
+
+OBEXServer::~OBEXServer() {
+	state = Disconected;
+	wait();
 }

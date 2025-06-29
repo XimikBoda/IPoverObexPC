@@ -21,25 +21,28 @@ void worker(BTSock btsocks, BTSock btsockc) { // TODO make class
 
 	StreamToIP stip;
 	stip.reader.sds_connect(&OBEXs.stream_writer);
-	stip.writer.sdwa_connect(&OBEXc);
-	//stip.writer.sdsa_connect(&OBEXc.stream_reader);
+	stip.writer.sdsa_connect(&OBEXc.stream_reader);
 
 	OBEXc.connet();
 	OBEXc.initPutStream("IpOverObex.txt", 0x7FFFFFFF);
 
+	OBEXs.run();
+	OBEXc.run();
+	stip.run();
 
+	OBEXs.wait();
+	OBEXc.wait();
+	stip.wait();
 
-	std::thread a([&]() { OBEXs.run(); }); // temp 
-	std::thread b([&]() { stip.run(); }); // temp 
-
-	while (1) {
-		_sleep(10000); // temp
-	}
+	std::cout << "Disconnected: " << mac << '\n';
 }
 
 std::vector<std::thread> threads;
 
 int main() {
+	std::locale::global(std::locale(""));
+	std::ios::sync_with_stdio(false);
+
 	BTSockListener btsockl;
 	btsockl.bind(obex_id);
 

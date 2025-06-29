@@ -21,7 +21,7 @@ void StreamToIP::makeRspGeneral(uint16_t type_id, uint8_t act, uint8_t rsp) { //
 }
 
 void StreamToIP::parsePacket() {
-	//size = reader.readVarInt(); // Do we nned this?
+	//size = reader.readVarInt(); // Do we need this?
 	size = reader.readUInt16();
 	uint16_t type_id = reader.readUInt16();
 	type = getType(type_id);
@@ -61,7 +61,7 @@ void StreamToIP::parseTCPConnectPacket() {
 	std::string adders = reader.readString();
 	uint16_t port = reader.readUInt16();
 	size_t receive_buf = reader.readVarInt();
-	
+
 	TCPs[id].init(&writer, makeTypeId(TCP_T, id), receive_buf);
 	TCPs[id].connect(adders, port);
 }
@@ -80,8 +80,29 @@ void StreamToIP::parseTCPDisconnectPacket() {
 	TCPs[id].disconnect();
 }
 
-void StreamToIP::run() {
-	while (1) {
-		parsePacket();
+void StreamToIP::worker() {
+	try {
+		while (running) {
+			parsePacket();
+		}
 	}
+	catch (const DS::DataException& err) {}
+
+	reader.sds_close();
+	writer.sdsa_close();
+}
+
+void StreamToIP::run() {
+	if (!worker_thr)
+		worker_thr = std::make_unique<std::thread>(&StreamToIP::worker, this);
+}
+
+void StreamToIP::wait() {
+	if (worker_thr && worker_thr->joinable())
+		worker_thr->join();
+}
+
+StreamToIP::~StreamToIP() {
+	running = false;
+	wait();
 }

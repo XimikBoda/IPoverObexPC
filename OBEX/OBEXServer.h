@@ -5,6 +5,8 @@
 #include "OBEXMakePacket.h"
 #include "OBEX.h"
 
+#include <thread>
+
 class OBEXServer {
 	uint8_t current_pack = 0;
 	uint16_t current_pack_size = 0;
@@ -15,6 +17,7 @@ class OBEXServer {
 
 	OBEX_States state = Inited;
 
+	std::shared_ptr<std::thread> worker_thr;
 
 	void getPacketType();
 	void readPacket();
@@ -35,10 +38,15 @@ class OBEXServer {
 
 	void skipPacketToEnd();
 
+	void worker();
+
 public:
 	Reader reader;
 	OBEXMakePacket writer;
 	DS::StreamAgent stream_writer;
 
 	void run();
+	void wait();
+
+	~OBEXServer();
 };

@@ -20,6 +20,7 @@ namespace DS {
 			if (close_both)
 				sds_agent->sdsa_close(false);
 			sds_agent = nullptr;
+			sds_cv.notify_one();
 		}
 	}
 
@@ -30,13 +31,19 @@ namespace DS {
 		size_t lack_of_size = len > available_size ? len - available_size : 0;
 
 		if (mode == DS::Blocking) {
-			if (lack_of_size) sds_cv.wait(lk, [&] { return sds_buf.size() >= len; });
+			if (lack_of_size) sds_cv.wait(lk, [&] { return sds_buf.size() >= len || !sds_agent; });
 		}
 		else if (mode == DS::BlockingPartial) {
-			if (!available_size) sds_cv.wait(lk, [&] { return sds_buf.size(); });
+			if (!available_size) sds_cv.wait(lk, [&] { return sds_buf.size() || !sds_agent; });
 		}
 
+		if (!sds_agent)
+			throw DS::DataException();
+
 		available_size = sds_buf.size();
+
+		if (len > available_size)
+			len = available_size;
 
 		if (available_size) {
 			memcpy(buf, sds_buf.data(), len);

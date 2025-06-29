@@ -114,7 +114,7 @@ void TCP::receive(size_t received) {
 		connect_thread_cv.notify_one();
 		return;
 	}
-	
+
 
 	receive_thread = std::thread([this]() {
 		while (true) {
@@ -153,5 +153,15 @@ void TCP::disconnect() {
 	connected = false;
 	connect_thread_cv.notify_one();
 	sock->disconnect();
+}
+
+TCP::~TCP() {
+	disconnect();
+	if (connect_thread.joinable())
+		connect_thread.join();
+	if (send_thread.joinable())
+		send_thread.join();
+	if (receive_thread.joinable())
+		receive_thread.join();
 }
 

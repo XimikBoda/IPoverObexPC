@@ -136,11 +136,32 @@ void OBEXClient::PutStreamData(vec buf) {
 		makePutPacketAndResponce(vec(buf.begin() + count * max_buf_size, buf.end()));
 }
 
-ssize_t OBEXClient::write(const void* buf, size_t len) {
-	return len;
+void OBEXClient::worker() {
+	try {
+		while (connected) {
+			size_t max_buf_size = max_pack_size - 6;
+			const auto& buf = stream_reader.read(max_buf_size, DS::BlockingPartial);
+			makePutPacketAndResponce(buf);
+		}
+	}
+	catch (const DS::DataException& err) {}
+
+	stream_reader.sds_close();
+	reader.sdra_close();
+	writer.sdwa_close();
 }
 
-ssize_t OBEXClient::write(const vec& buf) {
-	PutStreamData(buf);
-	return buf.size();
+void OBEXClient::run() {
+	if (!worker_thr)
+		worker_thr = std::make_unique<std::thread>(&OBEXClient::worker, this);
+}
+
+void OBEXClient::wait() {
+	if (worker_thr && worker_thr->joinable())
+		worker_thr->join();
+}
+
+OBEXClient::~OBEXClient() {
+	connected = false;
+	wait();
 }
