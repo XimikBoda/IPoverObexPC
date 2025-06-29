@@ -13,12 +13,14 @@ public:
 	BTAddress() = default;
 	BTAddress(uint64_t val);
 	BTAddress(uint8_t mac[MAC_LEN]);
+	BTAddress(std::string str);
 
 	uint64_t toUInt64();
 	std::string toString();
 
 	void fromUInt64(uint64_t val);
 	void fromArray(uint8_t mac[MAC_LEN]);
+	void fromString(std::string str);
 
 	std::string getName();
 

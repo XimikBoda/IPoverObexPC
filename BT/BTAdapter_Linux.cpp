@@ -35,9 +35,9 @@ bool BTAdapter::setOn(bool on) {
 }
 
 BTAddress BTAdapter::getAddress() {
-	std::string name = adapterProxy->getProperty("Address").
+	std::string address = adapterProxy->getProperty("Address").
 		onInterface("org.bluez.Adapter1").get<std::string>();
-	return BTAddress();
+	return BTAddress(address);
 }
 
 std::string BTAdapter::getName() {

@@ -24,6 +24,10 @@ BTAddress::BTAddress(uint8_t mac[MAC_LEN]) {
 	fromArray(mac);
 }
 
+BTAddress::BTAddress(std::string str) {
+	fromString(str);
+}
+
 uint64_t BTAddress::toUInt64() {
 	uint64_t res = 0;
 	uint8_t* res8 = (uint8_t*)&res;
@@ -48,6 +52,14 @@ void BTAddress::fromUInt64(uint64_t val) {
 void BTAddress::fromArray(uint8_t mac[MAC_LEN]) {
 	for (int i = 0; i < MAC_LEN; ++i)
 		this->mac[i] = mac[i];
+}
+
+void BTAddress::fromString(std::string str) {
+	if (str.length() != 18 - 1)
+		return;
+
+	sscanf(str.c_str(), "%02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX",
+		&mac[0], &mac[1], &mac[2], &mac[3], &mac[4], &mac[5]);
 }
 
 #ifdef WIN32
