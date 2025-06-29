@@ -39,42 +39,62 @@ BTAddress BTSock::getRemoteAddress() {
 	return remote_addr;
 }
 
-size_t BTSock::read(void* buf, size_t len) {
+void BTSock::setReadBlocking(DS::AccessMode mode) {
+	//set_blocking(this->socket_fd.get(), mode != DS::NonBlocking);
+	if(mode == DS::NonBlocking)
+		throw std::runtime_error("NonBlocking not implemented yet");
+	read_mode = mode;
+}
+
+void BTSock::setWriteBlocking(DS::AccessMode mode) {
+	//set_blocking(this->socket_fd.get(), mode != DS::NonBlocking);
+	if (mode == DS::NonBlocking)
+		throw std::runtime_error("NonBlocking not implemented yet");
+	write_mode = mode;
+}
+
+ssize_t BTSock::read(void* buf, size_t len) {
 	size_t total_read = 0;
 	while (total_read < len) {
-		ssize_t bytes_read = ::read(socket_fd.get(), static_cast<uint8_t*>(buf) + total_read, len - total_read);
-		if (bytes_read < 0) {
-			throw std::runtime_error("Failed to read from socket");
-		}
-		else if (bytes_read == 0) {
-			break; // End of stream
-		}
-		total_read += static_cast<size_t>(bytes_read);
+		ssize_t bytes_read = ::read(socket_fd.get(), (uint8_t*)(buf) + total_read, len - total_read);
+		if (bytes_read <= 0) 
+			throw DS::DataException();
+		
+		total_read += bytes_read;
+
+		if (read_mode == DS::BlockingPartial)
+			break;
 	}
 	return total_read;
 }
 
-std::vector<uint8_t> BTSock::read(size_t len) {
-	if (len == 0) return {};
-	std::vector<uint8_t> buf(len);
-	size_t bytes_read = read(buf.data(), len);
-	buf.resize(bytes_read);
-	return buf;
+const vec& BTSock::read(size_t len) {
+	static thread_local vec res;
+
+	res.resize(len);
+	if (len) {
+		auto readed = read(res.data(), len);
+		res.resize(readed);
+	}
+	return res;
 }
 
-size_t BTSock::write(void* buf, size_t len) {
+ssize_t BTSock::write(const void* buf, size_t len) {
 	size_t total_written = 0;
 	while (total_written < len) {
-		ssize_t bytes_written = ::write(socket_fd.get(), static_cast<const uint8_t*>(buf) + total_written, len - total_written);
-		if (bytes_written < 0) {
-			throw std::runtime_error("Failed to write to socket");
-		}
-		total_written += static_cast<size_t>(bytes_written);
+		ssize_t bytes_written = ::write(socket_fd.get(), (const uint8_t*)buf + total_written, len - total_written);
+		if (bytes_written < 0)
+			throw DS::DataException();
+
+		total_written += bytes_written;
+
+		if (write_mode == DS::BlockingPartial)
+			break;
 	}
 	return total_written;
 }
 
-size_t BTSock::write(std::vector<uint8_t> buf) {
+ssize_t BTSock::write(const vec& buf) {
 	return write(buf.data(), buf.size());
 }
 

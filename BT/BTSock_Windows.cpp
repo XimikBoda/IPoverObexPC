@@ -61,6 +61,8 @@ BTAddress BTSock::getRemoteAddress() {
 }
 
 void BTSock::setReadBlocking(DS::AccessMode mode) {
+	if (mode == DS::NonBlocking)
+		throw std::runtime_error("NonBlocking not implemented yet");
 	//if (read_mode == DS::AccessMode::NonBlocking)
 	//	if (mode != DS::AccessMode::NonBlocking)
 	//		if (read_operation) {
@@ -75,6 +77,8 @@ void BTSock::setReadBlocking(DS::AccessMode mode) {
 }
 
 void BTSock::setWriteBlocking(DS::AccessMode mode) {
+	if (mode == DS::NonBlocking)
+		throw std::runtime_error("NonBlocking not implemented yet");
 	write_mode = mode;
 }
 
