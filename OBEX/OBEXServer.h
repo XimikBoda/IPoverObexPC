@@ -6,6 +6,7 @@
 #include "OBEX.h"
 
 #include <thread>
+#include <memory>
 
 class OBEXServer {
 	uint8_t current_pack = 0;

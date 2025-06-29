@@ -7,3 +7,4 @@ cmake-build-debug
 out
 vs
 bin
+CMakeSettings.json

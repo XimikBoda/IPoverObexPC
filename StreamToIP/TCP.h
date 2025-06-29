@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <memory>
 #include <atomic>
+#include <thread>
 
 #include <SFML/Network/TcpSocket.hpp>
 #include "PacketMaker.h"

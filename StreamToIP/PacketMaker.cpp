@@ -1,4 +1,5 @@
 #include "PacketMaker.h"
+#include <stdexcept>
 
 static const int SEGMENT_BITS = 0x7F;
 static const int CONTINUE_BIT = 0x80;
