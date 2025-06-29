@@ -2,6 +2,7 @@
 #include <string>
 #include <thread>
 #include <BTSockListener.h>
+#include <BTAdapter.h>
 #include <OBEXServer.h>
 #include <OBEXClient.h>
 #include <StreamToIP.h>
@@ -47,9 +48,28 @@ int main() {
 	std::locale::global(std::locale(""));
 	std::ios::sync_with_stdio(false);
 
+	BTAdapter adapter;
+	if (!adapter.isThere()) {
+		std::cout << "BT adapter not found\n";
+		return 0;
+	}
+
+	if (!adapter.isOn()) {
+		std::cout << "BT is turn off, trying to turn on... ";
+
+		if(adapter.setOn(true))
+			std::cout << "done\n";
+		else {
+			std::cout << "not allowed\n";
+			std::cout << "Turn on BT and try again\n";
+			return 0;
+		}
+	}
+
 	BTSockListener btsockl;
 	btsockl.bind(obex_id);
 
+	std::cout << "BT start listening\n";
 	while (true) {
 		BTSock btsocks, btsockc;
 		btsockl.accept(btsocks, true);
