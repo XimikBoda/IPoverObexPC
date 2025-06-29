@@ -1,7 +1,7 @@
+#ifdef WIN32
 #include "BTAdapter.h"
 #include <codecvt>
 
-#ifdef WIN32
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Devices.Bluetooth.h>

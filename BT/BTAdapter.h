@@ -9,12 +9,16 @@
 using namespace winrt;
 using namespace Windows::Devices::Bluetooth;
 using namespace Windows::Devices::Radios;
+#elif __unix__
+#include <sdbus-c++/sdbus-c++.h>
 #endif
 
 class BTAdapter {
 #ifdef WIN32
 	BluetoothAdapter adapter;
 	std::shared_ptr<Radio> radio;
+#elif __unix__
+	std::unique_ptr<sdbus::IProxy> adapterProxy;
 #endif
 public:
 	BTAdapter();

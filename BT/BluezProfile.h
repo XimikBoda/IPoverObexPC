@@ -39,6 +39,7 @@ class BluezProfile {
 public:
 	BluezProfile(uint16_t id);
 	static BluezProfile& getById(uint16_t id);
+	static sdbus::IConnection& getBusConnection();
 
 	void bind();
 	void unbind();

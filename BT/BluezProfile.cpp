@@ -9,7 +9,7 @@ using namespace std::string_literals;
 
 std::map<uint16_t, std::shared_ptr<BluezProfile>> BluezProfile::_bluezProfiles;
 std::unique_ptr<sdbus::IConnection> BluezProfile::service_connection;
-std::unique_ptr<sdbus::IConnection> BluezProfile::bus_connection;
+std::unique_ptr<sdbus::IConnection> BluezProfile::bus_connection = sdbus::createSystemBusConnection();
 
 static std::string makeUUIDfromId(uint16_t id) {
 	char tmp[100] = {};
@@ -30,12 +30,16 @@ BluezProfile& BluezProfile::getById(uint16_t id) {
 	return *up;
 }
 
+sdbus::IConnection& BluezProfile::getBusConnection() {
+	return *bus_connection;
+}
+
 BluezProfile::BluezProfile(uint16_t id) {
 	if (!service_connection) {
 		service_connection = sdbus::createSystemBusConnection(sdbus::ServiceName("org.IPoverObex"));
 		//service_connection->enterEventLoopAsync();
 		std::thread([&]() {service_connection->enterEventLoop(); std::cout << "Done?\n"; }).detach();
-		bus_connection = sdbus::createSystemBusConnection();
+		//bus_connection = sdbus::createSystemBusConnection();
 	}
 	profile_object_path = sdbus::ObjectPath("/org/IPoverObex/"s + to_stringHex02(id));
 	profile_object = sdbus::createObject(*service_connection, profile_object_path);
