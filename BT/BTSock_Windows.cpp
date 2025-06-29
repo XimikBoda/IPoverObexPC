@@ -115,8 +115,6 @@ ssize_t BTSock::read(void* buf, size_t len) {
 	size_t available_size = reader.UnconsumedBufferLength();
 	size_t lack_of_size = len > available_size ? len - available_size : 0;
 
-	printf("b available_size %d\n", (int)available_size);
-
 	if (lack_of_size && (read_mode == DS::Blocking || available_size == 0))
 		reader.LoadAsync(lack_of_size).get();
 
@@ -124,8 +122,6 @@ ssize_t BTSock::read(void* buf, size_t len) {
 
 	if (!available_size)
 		throw DS::DataException();
-
-	printf("a available_size %d\n", (int)available_size);
 
 	if (len > available_size)
 		len = available_size;

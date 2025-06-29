@@ -20,6 +20,9 @@ public:
 	void fromUInt64(uint64_t val);
 	void fromArray(uint8_t mac[MAC_LEN]);
 
+	std::string getName();
+	std::wstring getWName();
+
 #ifdef __unix__
 	BTAddress(bdaddr_t adr);
 	bdaddr_t to_bdaddr();
@@ -27,4 +30,5 @@ public:
 
 	std::string toDBusString();
 #endif 
+
 };

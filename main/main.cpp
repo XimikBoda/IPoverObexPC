@@ -9,7 +9,11 @@
 uint16_t obex_id = 0x1105;
 
 void worker(BTSock btsocks, BTSock btsockc) { // TODO make class
-	std::cout << "Connected: " << btsocks.getRemoteAddress().toString() << '\n';
+	auto mac = btsocks.getRemoteAddress().toString();
+	auto name = btsocks.getRemoteAddress().getWName();
+	std::cout << "Connected: ";
+	std::wcout << name;
+	std::cout << " (" << mac << ")\n";
 
 	OBEXServer OBEXs;
 	OBEXs.reader.sdra_connect(&btsocks);
