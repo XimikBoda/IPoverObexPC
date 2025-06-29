@@ -5,8 +5,8 @@ set(PROJECT_NAME "BT")
 add_library(${PROJECT_NAME} STATIC 
     BTSock.h BTSock_Windows.cpp BTSock_Linux.cpp
 	BTSockListener.h BTSockListener_Windows.cpp BTSockListener_Linux.cpp
+	BTAdapter.h BTAdapter_Windows.cpp BTSockListener_Linux.cpp
 	BTAddress.h BTAddress.cpp
-	BTAdapter.h BTAdapter.cpp
     BluezProfile.h BluezProfile.cpp
 )
 
