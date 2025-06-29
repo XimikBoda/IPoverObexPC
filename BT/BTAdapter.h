@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+#include "BTAddress.h"
 
 #ifdef WIN32
 #include <winrt/Windows.Foundation.Collections.h>
@@ -22,4 +22,8 @@ public:
 	bool isThere();
 	bool isOn();
 	bool setOn(bool on);
+
+	BTAddress getAddress();
+	std::string getName();
+	std::wstring getWName();
 };

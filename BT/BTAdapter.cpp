@@ -1,4 +1,5 @@
 #include "BTAdapter.h"
+#include <codecvt>
 
 #ifdef WIN32
 #include <winrt/Windows.Foundation.h>
@@ -11,8 +12,8 @@ using namespace winrt;
 using namespace Windows::Devices::Bluetooth;
 using namespace Windows::Devices::Radios;
 
-BTAdapter::BTAdapter() : adapter(BluetoothAdapter::GetDefaultAsync().get()){
-	if(adapter)
+BTAdapter::BTAdapter() : adapter(BluetoothAdapter::GetDefaultAsync().get()) {
+	if (adapter)
 		radio = std::make_shared<Radio>(adapter.GetRadioAsync().get());
 }
 
@@ -29,4 +30,19 @@ bool BTAdapter::setOn(bool on) {
 
 	return accesss == RadioAccessStatus::Allowed;
 }
+
+BTAddress BTAdapter::getAddress() {
+	return BTAddress(adapter.BluetoothAddress());
+}
+
+std::string BTAdapter::getName() {
+	static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+
+	return converter.to_bytes(getWName());
+}
+
+std::wstring BTAdapter::getWName() {
+	return radio->Name().c_str(); // return "Bluetooth". Should I try BluetoothGetRadioInfo?
+}
+
 #endif

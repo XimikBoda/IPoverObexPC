@@ -60,21 +60,23 @@ int main() {
 
 	BTAdapter adapter;
 	if (!adapter.isThere()) {
-		std::cout << "BT adapter not found\n"; 
+		std::cout << "BT adapter not found\n";
 		wait_any_key_to_exit();
 	}
 
 	if (!adapter.isOn()) {
 		std::cout << "BT is turn off, trying to turn on... ";
 
-		if(adapter.setOn(true))
+		if (adapter.setOn(true))
 			std::cout << "done\n";
 		else {
 			std::cout << "not allowed\n";
-			std::cout << "Turn on BT and try again\n";
+			std::cout << "Turn on BT manually and try again\n";
 			wait_any_key_to_exit();
 		}
 	}
+
+	std::cout << "BT mac: " << adapter.getAddress().toString() << "\n";
 
 	BTSockListener btsockl;
 	btsockl.bind(obex_id);

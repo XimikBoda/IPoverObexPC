@@ -1,7 +1,5 @@
 #include "BTAddress.h"
-#include <locale>
 #include <codecvt>
-#include <string>
 
 #ifdef WIN32
 #include <winrt/base.h>
