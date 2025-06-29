@@ -13,6 +13,12 @@ BTAdapter::BTAdapter() {
 }
 
 bool BTAdapter::isThere() {
+	try {
+		adapterProxy->getAllProperties().onInterface("org.bluez.Adapter1");
+	}
+	catch (const sdbus::Error& err) {
+		return false;
+	}
 	return true;
 }
 
