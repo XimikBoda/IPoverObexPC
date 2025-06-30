@@ -35,13 +35,19 @@ IAsyncAction BTSockListener::OnConnectionReceived(StreamSocketListener sender, S
 	return 0;
 }
 
-void BTSockListener::bind(uint16_t id) {
-	serviceId = RfcommServiceId::FromShortId(id);
-	serviceProvider = RfcommServiceProvider::CreateAsync(serviceId).get();
-	ssl.ConnectionReceived({ this, &BTSockListener::OnConnectionReceived });
-	ssl.BindServiceNameAsync(serviceId.AsString(), SocketProtectionLevel::BluetoothEncryptionAllowNullAuthentication).get();
+bool BTSockListener::bind(uint16_t id) {
+	try {
+		serviceId = RfcommServiceId::FromShortId(id);
+		serviceProvider = RfcommServiceProvider::CreateAsync(serviceId).get();
+		ssl.ConnectionReceived({ this, &BTSockListener::OnConnectionReceived });
+		ssl.BindServiceNameAsync(serviceId.AsString(), SocketProtectionLevel::BluetoothEncryptionAllowNullAuthentication).get();
 
-	serviceProvider.StartAdvertising(ssl, true);
+		serviceProvider.StartAdvertising(ssl, true);
+	}
+	catch (const winrt::hresult_error& e) {
+		return false;
+	}
+	return true;
 }
 
 bool BTSockListener::accept(BTSock& btsock, bool block) {

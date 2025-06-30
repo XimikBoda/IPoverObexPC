@@ -26,9 +26,16 @@ BTSockListener::BTSockListener() {
 	serviceId = 0;
 }
 
-void BTSockListener::bind(uint16_t id) {
-	BluezProfile::getById(id).bind();
-	serviceId = id;
+bool BTSockListener::bind(uint16_t id) {
+	try {
+		BluezProfile::getById(id).bind();
+		serviceId = id;
+	}
+	catch (const sdbus::Error& err) {
+		std::cout << "Bind error: " << err.getMessage() << "\n";
+		return false;
+	}
+	return true;
 }
 
 bool BTSockListener::accept(BTSock& btsock, bool block) {

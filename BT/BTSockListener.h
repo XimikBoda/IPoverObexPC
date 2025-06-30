@@ -35,7 +35,7 @@ class BTSockListener {
 public:
 	BTSockListener();
 
-	void bind(uint16_t id);
+	bool bind(uint16_t id);
 
 	bool accept(BTSock& btsock, bool block = false);
 

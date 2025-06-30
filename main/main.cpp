@@ -9,6 +9,8 @@
 #include <OBEXServer.h>
 #include <OBEXClient.h>
 #include <StreamToIP.h>
+#include <SFML/System/Sleep.hpp>
+
 
 uint16_t obex_id = 0x1105;
 
@@ -69,8 +71,11 @@ int main() {
 	if (!adapter.isOn()) {
 		std::cout << "BT is turn off, trying to turn on... ";
 
-		if (adapter.setOn(true))
+		if (adapter.setOn(true)) {
 			std::cout << "done\n";
+			std::cout << "Waiting 5 seconds for full BT initialization...\n";
+			sf::sleep(sf::seconds(5));
+		}
 		else {
 			std::cout << "not allowed\n";
 			std::cout << "Turn on BT manually and try again\n";
@@ -82,7 +87,12 @@ int main() {
 	std::cout << "BT mac: " << adapter.getAddress().toString() << "\n";
 
 	BTSockListener btsockl;
-	btsockl.bind(obex_id);
+	if (!btsockl.bind(obex_id)) {
+		std::cout << "Failed to bind BT service, please close other application " 
+			<< "that may be using this service (OBEX/File transfer) and try again.\n";
+		wait_any_key_to_exit();
+	}
+
 
 	std::cout << "BT start listening\n";
 	while (true) {
