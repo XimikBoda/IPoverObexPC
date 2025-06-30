@@ -1,5 +1,8 @@
 #ifdef WIN32
 #include "BTAdapter.h"
+
+#include <windows.h>
+#include <bluetoothapis.h>
 #include <codecvt>
 
 #include <winrt/Windows.Foundation.h>
@@ -38,7 +41,23 @@ BTAddress BTAdapter::getAddress() {
 std::string BTAdapter::getName() {
 	static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 
-	return converter.to_bytes(radio->Name().c_str());
+	std::string name = converter.to_bytes(radio->Name().c_str()); // "Bluetooth"...
+
+	HANDLE hRadio = nullptr; // Hello old win32 api) 
+	BLUETOOTH_FIND_RADIO_PARAMS btfrp = { sizeof(BLUETOOTH_FIND_RADIO_PARAMS) };
+	HBLUETOOTH_RADIO_FIND hFind = BluetoothFindFirstRadio(&btfrp, &hRadio);
+
+	if (hFind) {
+		BLUETOOTH_RADIO_INFO bri = { sizeof(BLUETOOTH_RADIO_INFO) };
+		if (BluetoothGetRadioInfo(hRadio, &bri) == ERROR_SUCCESS) {
+			name = converter.to_bytes(bri.szName);
+		}
+
+		CloseHandle(hRadio);
+		BluetoothFindRadioClose(hFind);
+	}
+
+	return name;
 }
 
 #endif

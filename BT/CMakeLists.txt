@@ -15,7 +15,7 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
 endif()
 
 if(WIN32)
-	target_link_libraries(${PROJECT_NAME} windowsapp)
+	target_link_libraries(${PROJECT_NAME} windowsapp Bthprops)
 elseif(UNIX)
 	target_link_libraries(${PROJECT_NAME} -l:libbluetooth.a sdbus-c++)
 	set(CMAKE_CXX_FLAGS "-fpermissive")
