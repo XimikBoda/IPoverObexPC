@@ -11,7 +11,7 @@ namespace DS {
 
 		void setReadBlocking(DS::AccessMode mode);
 
-		ssize_t read(void* buf, size_t len);
+		size_t read(void* buf, size_t len);
 		const vec& read(size_t len);
 
 		~ReaderAgent();

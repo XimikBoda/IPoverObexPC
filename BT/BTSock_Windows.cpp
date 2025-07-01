@@ -82,13 +82,13 @@ void BTSock::setWriteBlocking(DS::AccessMode mode) {
 	write_mode = mode;
 }
 
-ssize_t BTSock::readReadyData(void* buf, size_t len) {
+size_t BTSock::readReadyData(void* buf, size_t len) {
 	auto readed = reader.ReadBuffer(len);
 	memcpy(buf, readed.data(), readed.Length());
 	return readed.Length();
 }
 
-/*ssize_t BTSock::readNotBlocking(void* buf, size_t len) {
+/*size_t BTSock::readNotBlocking(void* buf, size_t len) {
 	if (read_operation)
 		if (read_operation->Status() == AsyncStatus::Completed)
 			read_operation.reset();
@@ -109,7 +109,7 @@ ssize_t BTSock::readReadyData(void* buf, size_t len) {
 	return 0;
 }*/
 
-ssize_t BTSock::read(void* buf, size_t len) {
+size_t BTSock::read(void* buf, size_t len) {
 	if (!len)
 		return 0;
 
@@ -144,14 +144,14 @@ const vec& BTSock::read(size_t len) {
 	return res;
 }
 
-ssize_t BTSock::write(const void* buf, size_t len) {
+size_t BTSock::write(const void* buf, size_t len) {
 	if (!len)
 		return 0;
 
 	return write(vec((uint8_t*)buf, (uint8_t*)buf + len));
 }
 
-ssize_t BTSock::write(const vec& buf) {
+size_t BTSock::write(const vec& buf) {
 	if (!buf.size())
 		return 0;
 

@@ -16,7 +16,7 @@ namespace DS {
 		bool sds_connect(class StreamAgent* sds_agent, bool connect_both = true);
 		void sds_close(bool close_both = true);
 
-		ssize_t read(void* buf, size_t len, DS::AccessMode mode);
+		size_t read(void* buf, size_t len, DS::AccessMode mode);
 		const vec& read(size_t len, DS::AccessMode mode);
 		vec readAll();
 		void sds_write(const void* buf, size_t len);

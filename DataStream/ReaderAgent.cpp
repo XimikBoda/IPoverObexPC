@@ -31,7 +31,7 @@ namespace DS {
 		sdra_p->setReadBlocking(mode);
 	}
 
-	ssize_t ReaderAgent::read(void* buf, size_t len) {
+	size_t ReaderAgent::read(void* buf, size_t len) {
 		if (!sdra_p)
 			throw DS::DataException();
 

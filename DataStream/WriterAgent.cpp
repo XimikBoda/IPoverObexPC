@@ -30,14 +30,14 @@ namespace DS {
 		sdwa_p->setWriteBlocking(mode);
 	}
 
-	ssize_t WriterAgent::write(const void* buf, size_t len) {
+	size_t WriterAgent::write(const void* buf, size_t len) {
 		if (!sdwa_p)
 			throw DS::DataException();
 
 		return sdwa_p->write(buf, len);
 	}
 
-	ssize_t WriterAgent::write(const vec& buf) {
+	size_t WriterAgent::write(const vec& buf) {
 		if (!sdwa_p)
 			throw DS::DataException();
 

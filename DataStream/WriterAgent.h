@@ -10,8 +10,8 @@ namespace DS {
 
 		void setWriteBlocking(DS::AccessMode mode);
 
-		ssize_t write(const void* buf, size_t len);
-		ssize_t write(const vec &buf);
+		size_t write(const void* buf, size_t len);
+		size_t write(const vec &buf);
 
 		~WriterAgent();
 	};

@@ -10,8 +10,8 @@ namespace DS {
 
 		virtual void setWriteBlocking(DS::AccessMode mode);
 
-		virtual ssize_t write(const void* buf, size_t len) = 0;
-		virtual ssize_t write(const vec &buf) = 0;
+		virtual size_t write(const void* buf, size_t len) = 0;
+		virtual size_t write(const vec &buf) = 0;
 
 		~Writer();
 	};

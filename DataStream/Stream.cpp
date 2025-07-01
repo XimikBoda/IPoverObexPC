@@ -24,7 +24,7 @@ namespace DS {
 		}
 	}
 
-	ssize_t Stream::read(void* buf, size_t len, DS::AccessMode mode) {
+	size_t Stream::read(void* buf, size_t len, DS::AccessMode mode) {
 		std::unique_lock lk(sds_mutex);
 
 		size_t available_size = sds_buf.size();
@@ -61,7 +61,7 @@ namespace DS {
 		res.resize(len);
 
 		if (len) {
-			ssize_t readed = read(res.data(), len, mode);
+			size_t readed = read(res.data(), len, mode);
 			res.resize(readed);
 		}
 

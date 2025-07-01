@@ -28,7 +28,7 @@ class BTSock : public DS::Reader, public DS::Writer {
 	DataReader reader;
 	DataWriter writer;
 
-	ssize_t readReadyData(void* buf, size_t len);
+	size_t readReadyData(void* buf, size_t len);
 #elif __unix__
 	sdbus::UnixFd socket_fd;
 	BTAddress remote_addr;
@@ -37,7 +37,7 @@ class BTSock : public DS::Reader, public DS::Writer {
 	DS::AccessMode read_mode = DS::Blocking;
 	DS::AccessMode write_mode = DS::Blocking;
 
-	//ssize_t readNotBlocking(void* buf, size_t len);
+	//size_t readNotBlocking(void* buf, size_t len);
 
 	//std::shared_ptr<DataReaderLoadOperation> read_operation;
 
@@ -57,9 +57,9 @@ public:
 	void setReadBlocking(DS::AccessMode mode) override;
 	void setWriteBlocking(DS::AccessMode mode) override;
 
-	ssize_t read(void* buf, size_t len) override;
+	size_t read(void* buf, size_t len) override;
 	const vec& read(size_t len) override;
-	ssize_t write(const void* buf, size_t len) override;
-	ssize_t write(const vec& buf) override;
+	size_t write(const void* buf, size_t len) override;
+	size_t write(const vec& buf) override;
 };
 
