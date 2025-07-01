@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <map>
 
 #include "ReaderFromBuf.h"
 #include "PacketMaker.h"
@@ -8,13 +7,13 @@
 
 
 class StreamToIP {
+	friend class TCP;
+
 	const uint8_t bits_for_type = 11;
 
 	enum Types : uint8_t{
-		TCP_T
+		TCP_SOCK_T
 	};
-
-	std::map<uint16_t, TCP> TCPs;
 
 	bool running = true;
 
@@ -32,14 +31,12 @@ class StreamToIP {
 
 	void parsePacket();
 
-	void parseTCPPacket();
-	void parseTCPConnectPacket();
-	void parseTCPSendPacket();
-	void parseTCPReceivePacket();
-	void parseTCPDisconnectPacket();
-
 	void worker();
+
+	TCP tcp;
 public:
+	StreamToIP();
+
 	ReaderFromBuf reader;
 	PacketMaker writer;
 

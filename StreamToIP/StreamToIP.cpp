@@ -28,56 +28,12 @@ void StreamToIP::parsePacket() {
 	id = getId(type_id);
 
 	switch (type) {
-	case TCP_T:
-		parseTCPPacket();
+	case TCP_SOCK_T:
+		tcp.parseTCPPacket();
 		break;
 	default:
 		break;
 	}
-}
-
-void StreamToIP::parseTCPPacket() {
-	uint8_t act = reader.readUInt8();
-
-	switch (act) {
-	case TCP::Connect:
-		parseTCPConnectPacket();
-		break;
-	case TCP::Send:
-		parseTCPSendPacket();
-		break;
-	case TCP::Receive:
-		parseTCPReceivePacket();
-		break;
-	case TCP::Disconnect:
-		parseTCPDisconnectPacket();
-		break;
-	default:
-		break;
-	}
-}
-
-void StreamToIP::parseTCPConnectPacket() {
-	std::string adders = reader.readString();
-	uint16_t port = reader.readUInt16();
-	size_t receive_buf = reader.readVarInt();
-
-	TCPs[id].init(&writer, makeTypeId(TCP_T, id), receive_buf);
-	TCPs[id].connect(adders, port);
-}
-
-void StreamToIP::parseTCPSendPacket() {
-	vec buf = reader.readVecBlocking(size - 5);
-	TCPs[id].send(buf);
-}
-
-void StreamToIP::parseTCPReceivePacket() {
-	size_t receive = reader.readVarInt();
-	TCPs[id].receive(receive);
-}
-
-void StreamToIP::parseTCPDisconnectPacket() {
-	TCPs[id].disconnect();
 }
 
 void StreamToIP::worker() {
@@ -91,6 +47,8 @@ void StreamToIP::worker() {
 	reader.sds_close();
 	writer.sdsa_close();
 }
+
+StreamToIP::StreamToIP() : tcp(*this) {}
 
 void StreamToIP::run() {
 	if (!worker_thr)
