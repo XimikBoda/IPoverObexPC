@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-#include "ReaderFromBuf.h"
+#include "PacketReader.h"
 #include "PacketMaker.h"
 #include "TCP.h"
 

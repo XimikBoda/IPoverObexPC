@@ -1,4 +1,4 @@
-#include "ReaderFromBuf.h"
+#include "PacketReader.h"
 
 static const int SEGMENT_BITS = 0x7F;
 static const int CONTINUE_BIT = 0x80;

@@ -1,7 +1,7 @@
 #pragma once
 #include "TCPSock.h"
 #include "PacketMaker.h"
-#include "ReaderFromBuf.h"
+#include "PacketReader.h"
 
 #include <cstdint>
 #include <memory>
