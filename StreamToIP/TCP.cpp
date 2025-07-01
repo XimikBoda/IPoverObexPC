@@ -35,7 +35,7 @@ void TCP::parseTCPConnectPacket() {
 }
 
 void TCP::parseTCPSendPacket() {
-	vec buf = reader.readVecBlocking(owner.size - 5);
+	vec buf = reader.readToEnd();
 	TCPs[owner.id].send(buf);
 }
 

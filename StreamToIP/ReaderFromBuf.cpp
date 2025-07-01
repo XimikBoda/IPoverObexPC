@@ -3,7 +3,13 @@
 static const int SEGMENT_BITS = 0x7F;
 static const int CONTINUE_BIT = 0x80;
 
+void ReaderFromBuf::readBegin() {
+	readed = 0;
+	size = readUInt16();
+}
+
 const vec& ReaderFromBuf::readVecBlocking(size_t len) {
+	readed += len;
 	return read(len, DS::Blocking);
 }
 
@@ -44,6 +50,10 @@ std::string ReaderFromBuf::readString() {
 	const auto& buf = readVecBlocking(len);
 
 	return std::string(buf.begin(), buf.end());
+}
+
+const vec& ReaderFromBuf::readToEnd() {
+	return readVecBlocking(size - readed);
 }
 
 //void ReaderFromBuf::skipToEnd(size_t pack_len) {

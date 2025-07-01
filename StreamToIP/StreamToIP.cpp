@@ -21,8 +21,7 @@ void StreamToIP::makeRspGeneral(uint16_t type_id, uint8_t act, uint8_t rsp) { //
 }
 
 void StreamToIP::parsePacket() {
-	//size = reader.readVarInt(); // Do we need this?
-	size = reader.readUInt16();
+	reader.readBegin();
 	uint16_t type_id = reader.readUInt16();
 	type = getType(type_id);
 	id = getId(type_id);

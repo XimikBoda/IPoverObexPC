@@ -10,7 +10,12 @@ class ReaderFromBuf : public DS::Stream {
 	friend class StreamToIP;
 	friend class TCP;
 
+	uint32_t readed = 0;
+	uint32_t size = 0;
+
 	ReaderFromBuf() = default;
+
+	void readBegin();
 
 	const vec& readVecBlocking(size_t len);
 	uint8_t readUInt8();
@@ -18,6 +23,8 @@ class ReaderFromBuf : public DS::Stream {
 	uint32_t readUInt32();
 	uint32_t readVarInt();
 	std::string readString();
+
+	const vec& readToEnd();
 
 	//void skipToEnd(size_t pack_len);
 };
