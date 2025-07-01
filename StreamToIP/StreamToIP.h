@@ -36,7 +36,7 @@ class StreamToIP {
 public:
 	StreamToIP();
 
-	ReaderFromBuf reader;
+	PacketReader reader;
 	PacketMaker writer;
 
 	void run();

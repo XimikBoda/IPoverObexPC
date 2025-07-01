@@ -15,7 +15,7 @@ class TCP {
 	friend class StreamToIP;
 
 	class StreamToIP& owner;
-	ReaderFromBuf &reader;
+	PacketReader &reader;
 
 	std::map<uint16_t, TCPSock> TCPs;
 

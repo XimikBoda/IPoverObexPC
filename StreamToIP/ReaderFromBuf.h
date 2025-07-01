@@ -6,14 +6,14 @@
 
 typedef std::vector<uint8_t> vec;
 
-class ReaderFromBuf : public DS::Stream {
+class PacketReader : public DS::Stream {
 	friend class StreamToIP;
 	friend class TCP;
 
 	uint32_t readed = 0;
 	uint32_t size = 0;
 
-	ReaderFromBuf() = default;
+	PacketReader() = default;
 
 	void readBegin();
 
