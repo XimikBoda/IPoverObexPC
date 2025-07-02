@@ -1,4 +1,6 @@
 #pragma once
+#include "PacketMaker.h"
+
 #include <cstdint>
 #include <memory>
 #include <atomic>
@@ -6,11 +8,11 @@
 #include <map>
 
 #include <SFML/Network/TcpSocket.hpp>
-#include "PacketMaker.h"
 #include <Stream.h>
 
 
 class TCPSock {
+	friend class TCPListener;
 public:
 	enum TCPAct : uint8_t {
 		Connect,
@@ -27,6 +29,8 @@ public:
 		Busy,
 		NameNotResolved
 	};
+
+	static TCPSock::RspStatus mapSfStatus(sf::Socket::Status status);
 private:
 	std::shared_ptr<sf::TcpSocket> sock = std::make_shared<sf::TcpSocket>();
 	std::thread connect_thread;
@@ -48,7 +52,6 @@ private:
 
 	bool connected = false;
 
-	TCPSock::RspStatus mapSfStatus(sf::Socket::Status status);
 
 	void makeRspConnect(RspStatus status);
 	void makeRspSend(RspStatus status, size_t sended);

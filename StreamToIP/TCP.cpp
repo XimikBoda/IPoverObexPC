@@ -30,20 +30,53 @@ void TCP::parseTCPConnectPacket() {
 	uint16_t port = reader.readUInt16();
 	size_t receive_buf = reader.readVarInt();
 
-	TCPs[owner.id].init(&owner.writer, owner.makeTypeId(owner.TCP_SOCK_T, owner.id), receive_buf);
-	TCPs[owner.id].connect(adders, port);
+	TCPsockets[owner.id].init(&owner.writer, owner.makeTypeId(owner.TCP_SOCK_T, owner.id), receive_buf);
+	TCPsockets[owner.id].connect(adders, port);
 }
 
 void TCP::parseTCPSendPacket() {
 	vec buf = reader.readToEnd();
-	TCPs[owner.id].send(buf);
+	TCPsockets[owner.id].send(buf);
 }
 
 void TCP::parseTCPReceivePacket() {
 	size_t receive = reader.readVarInt();
-	TCPs[owner.id].receive(receive);
+	TCPsockets[owner.id].receive(receive);
 }
 
 void TCP::parseTCPDisconnectPacket() {
-	TCPs[owner.id].disconnect();
+	TCPsockets[owner.id].disconnect();
+}
+
+void TCP::parseTCPLPacket() {
+	uint8_t act = reader.readUInt8();
+
+	switch (act) {
+	case TCPListener::Bind:
+		parseTCPLBindPacket();
+		break;
+	case TCPListener::Accept:
+		parseTCPSendPacket();
+		break;
+	case TCPListener::Close:
+		//parseTCPSendPacket();
+		break;
+	}
+}
+
+void TCP::parseTCPLBindPacket() {
+	uint16_t port = reader.readUInt16();
+
+	TCPlisteners[owner.id].init(&owner.writer, owner.makeTypeId(owner.TCP_SOCK_T, owner.id));
+	TCPlisteners[owner.id].bind(port);
+}
+
+void TCP::parseTCPLAcceptPacket() {
+	uint16_t id = reader.readUInt16();
+
+	TCPlisteners[owner.id].accept(TCPsockets[id]);
+}
+
+void TCP::parseTCPLClosePacket() {
+	TCPlisteners[owner.id].close();
 }

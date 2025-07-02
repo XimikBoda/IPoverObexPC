@@ -1,5 +1,6 @@
 #pragma once
 #include "TCPSock.h"
+#include "TCPListener.h"
 #include "PacketMaker.h"
 #include "PacketReader.h"
 
@@ -17,7 +18,8 @@ class TCP {
 	class StreamToIP& owner;
 	PacketReader &reader;
 
-	std::map<uint16_t, TCPSock> TCPs;
+	std::map<uint16_t, TCPSock> TCPsockets;
+	std::map<uint16_t, TCPListener> TCPlisteners;
 
 	TCP(class StreamToIP& owner_);
 
@@ -27,4 +29,8 @@ class TCP {
 	void parseTCPReceivePacket();
 	void parseTCPDisconnectPacket();
 
+	void parseTCPLPacket(); //TCPL is TCP listeners
+	void parseTCPLBindPacket();
+	void parseTCPLAcceptPacket();
+	void parseTCPLClosePacket();
 };
