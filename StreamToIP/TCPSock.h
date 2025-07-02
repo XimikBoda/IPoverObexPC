@@ -15,6 +15,7 @@ class TCPSock {
 	friend class TCPListener;
 public:
 	enum TCPAct : uint8_t {
+		Init,
 		Connect,
 		Send,
 		Receive,

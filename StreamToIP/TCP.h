@@ -24,6 +24,7 @@ class TCP {
 	TCP(class StreamToIP& owner_);
 
 	void parseTCPPacket();
+	void parseTCPInitPacket();
 	void parseTCPConnectPacket();
 	void parseTCPSendPacket();
 	void parseTCPReceivePacket();

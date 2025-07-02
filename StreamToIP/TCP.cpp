@@ -8,6 +8,9 @@ void TCP::parseTCPPacket() {
 	uint8_t act = reader.readUInt8();
 
 	switch (act) {
+	case TCPSock::Init:
+		parseTCPConnectPacket();
+		break;
 	case TCPSock::Connect:
 		parseTCPConnectPacket();
 		break;
@@ -23,6 +26,12 @@ void TCP::parseTCPPacket() {
 	default:
 		break;
 	}
+}
+
+void TCP::parseTCPInitPacket() {
+	size_t receive_buf = reader.readVarInt();
+
+	TCPsockets[owner.id].init(&owner.writer, owner.makeTypeId(owner.TCP_SOCK_T, owner.id), receive_buf);
 }
 
 void TCP::parseTCPConnectPacket() {
