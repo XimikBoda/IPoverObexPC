@@ -30,7 +30,7 @@ private:
 	class StreamToIP* owner = 0;
 
 	void makeRspBind(TCPSock::RspStatus status);
-	void makeRspAccept(TCPSock::RspStatus status);
+	void makeRspAccept(TCPSock::RspStatus status, uint32_t ip);
 
 public:
 	TCPListener() = default;

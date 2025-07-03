@@ -10,11 +10,12 @@ void TCPListener::makeRspBind(TCPSock::RspStatus status) {
 	writer->send();
 }
 
-void TCPListener::makeRspAccept(TCPSock::RspStatus status) {
+void TCPListener::makeRspAccept(TCPSock::RspStatus status, uint32_t ip) {
 	std::lock_guard lg(writer->mutex);
 	writer->init(type_id);
 	writer->putUInt8(TCPAct::Accept);
 	writer->putUInt8(status);
+	writer->putUInt32(ip);
 	writer->send();
 }
 
@@ -30,13 +31,20 @@ void TCPListener::bind(uint16_t port) {
 
 void TCPListener::accept(TCPSock& sock) {
 	if (listen_thread.joinable())
-		return makeRspAccept(TCPSock::Busy);
+		return makeRspAccept(TCPSock::Busy, 0);
 
 	listen_thread = std::thread([&sock, this]() {
 
 		auto res = listener.accept(*sock.sock);
 
-		makeRspAccept(TCPSock::mapSfStatus(res));
+		uint32_t ip = 0;
+		if (res == sf::Socket::Status::Done) {
+			auto address = sock.sock->getRemoteAddress();
+			if (address.has_value())
+				ip = address->toInteger();
+		}
+
+		makeRspAccept(TCPSock::mapSfStatus(res), ip);
 		});
 }
 
