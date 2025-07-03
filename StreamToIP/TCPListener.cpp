@@ -34,7 +34,6 @@ void TCPListener::accept(TCPSock& sock) {
 		return makeRspAccept(TCPSock::Busy, 0);
 
 	listen_thread = std::thread([&sock, this]() {
-
 		auto res = listener.accept(*sock.sock);
 
 		uint32_t ip = 0;
@@ -42,6 +41,8 @@ void TCPListener::accept(TCPSock& sock) {
 			auto address = sock.sock->getRemoteAddress();
 			if (address.has_value())
 				ip = address->toInteger();
+
+			sock.makeRspConnect(TCPSock::Done, ip);
 		}
 
 		makeRspAccept(TCPSock::mapSfStatus(res), ip);

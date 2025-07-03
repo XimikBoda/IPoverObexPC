@@ -54,7 +54,7 @@ private:
 	bool connected = false;
 
 
-	void makeRspConnect(RspStatus status);
+	void makeRspConnect(RspStatus status, uint32_t ip);
 	void makeRspSend(RspStatus status, size_t sended);
 	void makeRspReceive(RspStatus status, const vec& buf);
 

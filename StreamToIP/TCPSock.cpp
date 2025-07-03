@@ -28,11 +28,12 @@ TCPSock::RspStatus TCPSock::mapSfStatus(sf::Socket::Status status) {
 	}
 }
 
-void TCPSock::makeRspConnect(RspStatus status) {
+void TCPSock::makeRspConnect(RspStatus status, uint32_t ip) {
 	std::lock_guard lg(writer->mutex);
 	writer->init(type_id);
 	writer->putUInt8(TCPAct::Connect);
 	writer->putUInt8(status);
+	writer->putUInt32(ip);
 	writer->send();
 }
 
@@ -62,21 +63,21 @@ void TCPSock::init(PacketMaker* writer, uint16_t type_id, size_t receive_buf) {
 
 void TCPSock::connect(std::string addr, uint16_t port) {
 	if (connect_thread.joinable())
-		return makeRspConnect(Busy);
+		return makeRspConnect(Busy, 0);
 
 	connect_thread = std::thread([addr, port, this]() {
 		auto ip = sf::IpAddress::resolve(addr);
 		if (!ip.has_value())
-			return makeRspConnect(NameNotResolved);
+			return makeRspConnect(NameNotResolved, 0);
 
 		auto res = sock->connect(ip.value(), port, sf::seconds(30));
 
 		if (res == sf::Socket::Status::Done) {
 			connected = true;
-			receive(0); // hm
+			receive(0); // Start receiving
 		}
 
-		makeRspConnect(mapSfStatus(res));
+		makeRspConnect(mapSfStatus(res), ip->toInteger());
 		});
 }
 
