@@ -65,10 +65,10 @@ void TCP::parseTCPLPacket() {
 		parseTCPLBindPacket();
 		break;
 	case TCPListener::Accept:
-		parseTCPSendPacket();
+		parseTCPLAcceptPacket();
 		break;
 	case TCPListener::Close:
-		//parseTCPSendPacket();
+		parseTCPLClosePacket();
 		break;
 	}
 }

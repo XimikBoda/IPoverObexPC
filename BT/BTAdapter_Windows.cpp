@@ -29,9 +29,14 @@ bool BTAdapter::isOn() {
 }
 
 bool BTAdapter::setOn(bool on) {
-	auto accesss = radio->SetStateAsync(on ? RadioState::On : RadioState::Off).get();
+	try {
+		auto accesss = radio->SetStateAsync(on ? RadioState::On : RadioState::Off).get();
 
-	return accesss == RadioAccessStatus::Allowed;
+		return accesss == RadioAccessStatus::Allowed;
+	}
+	catch (...) {
+		return false;
+	}
 }
 
 BTAddress BTAdapter::getAddress() {
