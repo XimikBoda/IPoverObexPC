@@ -68,8 +68,12 @@ namespace DS {
 		return res;
 	}
 
-	vec Stream::readAll() {
+	vec Stream::readAll(DS::AccessMode mode) {
 		std::unique_lock lk(sds_mutex);
+
+		if (!sds_buf.size()) 
+			if (mode != DS::NonBlocking) 
+				sds_cv.wait(lk, [&] { return sds_buf.size(); });
 
 		std::vector<uint8_t> res = sds_buf;
 		sds_buf.resize(0);

@@ -23,6 +23,7 @@ private:
 	sf::TcpListener listener;
 
 	std::thread listen_thread;
+	bool listen_thread_busy = false;
 	
 	uint16_t type_id = 0;
 	PacketMaker* writer = 0;

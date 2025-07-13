@@ -30,6 +30,9 @@ void StreamToIP::parsePacket() {
 	case TCP_SOCK_T:
 		tcp.parseTCPPacket();
 		break;
+	case TCP_LISTENER_T:
+		tcp.parseTCPLPacket();
+		break;
 	default:
 		break;
 	}

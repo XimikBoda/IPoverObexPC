@@ -9,7 +9,7 @@ void TCP::parseTCPPacket() {
 
 	switch (act) {
 	case TCPSock::Init:
-		parseTCPConnectPacket();
+		parseTCPInitPacket();
 		break;
 	case TCPSock::Connect:
 		parseTCPConnectPacket();
@@ -55,6 +55,7 @@ void TCP::parseTCPReceivePacket() {
 
 void TCP::parseTCPDisconnectPacket() {
 	TCPsockets[owner.id].disconnect();
+	TCPsockets.erase(owner.id);
 }
 
 void TCP::parseTCPLPacket() {
@@ -76,7 +77,7 @@ void TCP::parseTCPLPacket() {
 void TCP::parseTCPLBindPacket() {
 	uint16_t port = reader.readUInt16();
 
-	TCPlisteners[owner.id].init(&owner.writer, owner.makeTypeId(owner.TCP_SOCK_T, owner.id));
+	TCPlisteners[owner.id].init(&owner.writer, owner.makeTypeId(owner.TCP_LISTENER_T, owner.id));
 	TCPlisteners[owner.id].bind(port);
 }
 

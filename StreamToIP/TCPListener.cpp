@@ -30,8 +30,11 @@ void TCPListener::bind(uint16_t port) {
 }
 
 void TCPListener::accept(TCPSock& sock) {
-	if (listen_thread.joinable())
+	if (listen_thread_busy)
 		return makeRspAccept(TCPSock::Busy, 0);
+
+	if (listen_thread.joinable())
+		listen_thread.join();
 
 	listen_thread = std::thread([&sock, this]() {
 		auto res = listener.accept(*sock.sock);
@@ -42,10 +45,14 @@ void TCPListener::accept(TCPSock& sock) {
 			if (address.has_value())
 				ip = address->toInteger();
 
+			sock.connected = true;
 			sock.makeRspConnect(TCPSock::Done, ip);
+			sock.receive(0); //todo
 		}
 
 		makeRspAccept(TCPSock::mapSfStatus(res), ip);
+
+		listen_thread_busy = false;
 		});
 }
 

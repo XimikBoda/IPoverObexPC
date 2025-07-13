@@ -84,17 +84,22 @@ void TCPSock::connect(std::string addr, uint16_t port) {
 void TCPSock::send(const vec& buf) {
 	send_buf.sds_write(buf.data(), buf.size());
 
-	if (send_thread.joinable())
+	if(send_thread_busy)
 		return;
+
+	if (send_thread.joinable())
+		send_thread.join();
+
+	send_thread_busy = true;
 
 	send_thread = std::thread([this]() {
 		while (true) {
 			if (!connected)
-				return;
+				break;
 
-			vec buf = send_buf.readAll();
+			vec buf = send_buf.readAll(DS::NonBlocking);
 			if (!buf.size())
-				return;
+				break;
 
 			auto res = sock->send(buf.data(), buf.size());
 			if (res != sf::Socket::Status::Done)
@@ -102,6 +107,7 @@ void TCPSock::send(const vec& buf) {
 
 			makeRspSend(mapSfStatus(res), buf.size());
 		}
+		send_thread_busy = false;
 		});
 }
 

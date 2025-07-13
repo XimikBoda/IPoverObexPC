@@ -18,7 +18,7 @@ namespace DS {
 
 		size_t read(void* buf, size_t len, DS::AccessMode mode);
 		const vec& read(size_t len, DS::AccessMode mode);
-		vec readAll();
+		vec readAll(DS::AccessMode mode);
 		void sds_write(const void* buf, size_t len);
 
 		~Stream();

@@ -38,6 +38,8 @@ private:
 	std::thread send_thread;
 	std::thread receive_thread;
 
+	bool send_thread_busy = false;
+
 	std::condition_variable connect_thread_cv;
 
 	uint16_t type_id = 0;
