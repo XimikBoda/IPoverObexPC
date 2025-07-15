@@ -73,7 +73,7 @@ namespace DS {
 
 		if (!sds_buf.size()) 
 			if (mode != DS::NonBlocking) 
-				sds_cv.wait(lk, [&] { return sds_buf.size(); });
+				sds_cv.wait(lk, [&] { return sds_buf.size() || !sds_agent; });
 
 		std::vector<uint8_t> res = sds_buf;
 		sds_buf.resize(0);
