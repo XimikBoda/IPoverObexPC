@@ -4,6 +4,7 @@ set(PROJECT_NAME "StreamToIP")
 
 add_library(${PROJECT_NAME} STATIC 
     StreamToIP.cpp StreamToIP.h
+    Log.cpp Log.h
     TCP.cpp TCP.h
     TCPSock.cpp TCPSock.h
     TCPListener.cpp TCPListener.h

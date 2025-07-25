@@ -30,6 +30,7 @@ void worker(BTSock btsocks, BTSock btsockc) { // TODO make class
 	StreamToIP stip;
 	stip.reader.sds_connect(&OBEXs.stream_writer);
 	stip.writer.sdsa_connect(&OBEXc.stream_reader);
+	stip.name = name;
 
 	OBEXc.connet();
 	OBEXc.initPutStream("IpOverObex.txt", 0x7FFFFFFF);
@@ -80,6 +81,7 @@ void workerTCP(std::shared_ptr<sf::TcpSocket> sock) { // TODO make class
 	StreamToIP stip;
 	stip.reader.sds_connect(&writer);
 	stip.writer.sdsa_connect(&reader);
+	stip.name = name;
 
 	stip.run();
 

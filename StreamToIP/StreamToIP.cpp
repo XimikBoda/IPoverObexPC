@@ -27,6 +27,9 @@ void StreamToIP::parsePacket() {
 	id = getId(type_id);
 
 	switch (type) {
+	case LOG_T:
+		log.parsePacket();
+		break;
 	case TCP_SOCK_T:
 		tcp.parseTCPPacket();
 		break;
@@ -50,7 +53,7 @@ void StreamToIP::worker() {
 	writer.sdsa_close();
 }
 
-StreamToIP::StreamToIP() : tcp(*this) {}
+StreamToIP::StreamToIP() : tcp(*this), log(*this) {}
 
 void StreamToIP::run() {
 	if (!worker_thr)

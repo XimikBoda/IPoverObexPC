@@ -9,6 +9,7 @@ typedef std::vector<uint8_t> vec;
 class PacketReader : public DS::Stream {
 	friend class StreamToIP;
 	friend class TCP;
+	friend class Log;
 
 	uint32_t readed = 0;
 	uint32_t size = 0;

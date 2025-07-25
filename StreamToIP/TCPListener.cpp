@@ -61,6 +61,7 @@ void TCPListener::close() {
 }
 
 TCPListener::~TCPListener() {
+	listener.close();
 	if (listen_thread.joinable())
 		listen_thread.join();
 }
