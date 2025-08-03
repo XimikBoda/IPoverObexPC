@@ -50,17 +50,20 @@ void TCPListener::accept(TCPSock& sock) {
 			sock.receive(0); //todo
 		}
 
-		makeRspAccept(TCPSock::mapSfStatus(res), ip);
+		if (!closing)
+			makeRspAccept(TCPSock::mapSfStatus(res), ip);
 
 		listen_thread_busy = false;
 		});
 }
 
 void TCPListener::close() {
+	closing = true;
 	listener.close();
 }
 
 TCPListener::~TCPListener() {
+	closing = true;
 	listener.close();
 	if (listen_thread.joinable())
 		listen_thread.join();

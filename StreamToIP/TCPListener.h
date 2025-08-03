@@ -24,6 +24,7 @@ private:
 
 	std::thread listen_thread;
 	bool listen_thread_busy = false;
+	bool closing = false;
 	
 	uint16_t type_id = 0;
 	PacketMaker* writer = 0;

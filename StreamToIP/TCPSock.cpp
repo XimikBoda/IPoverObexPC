@@ -146,6 +146,9 @@ void TCPSock::receive(size_t received) {
 			auto res = sock->receive(buf.data(), size, size);
 			receive_buf_used += size;
 
+			if(!connected)
+				break;
+
 			buf.resize(size);
 
 			if (res != sf::Socket::Status::Done)

@@ -84,6 +84,10 @@ void TCP::parseTCPLBindPacket() {
 void TCP::parseTCPLAcceptPacket() {
 	uint16_t id = reader.readUInt16();
 
+	auto it = TCPsockets.find(id);
+	if (it == TCPsockets.end())
+		abort();
+
 	TCPlisteners[owner.id].accept(TCPsockets[id]);
 }
 
