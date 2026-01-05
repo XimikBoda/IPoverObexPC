@@ -46,6 +46,7 @@ private:
 	PacketMaker* writer = 0;
 
 	DS::Stream send_buf;
+	DS::StreamAgent send_buf_a;
 
 	class StreamToIP* owner;
 

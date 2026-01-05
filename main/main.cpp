@@ -134,7 +134,6 @@ int main() {
 	std::thread bt([&]() {
 		BTAdapter adapter;
 		if (!adapter.isThere())
-
 			if (!adapter.isOn()) {
 				std::cout << "BT is turn off, trying to turn on... ";
 

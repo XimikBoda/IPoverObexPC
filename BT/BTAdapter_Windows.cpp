@@ -21,7 +21,7 @@ BTAdapter::BTAdapter() : adapter(BluetoothAdapter::GetDefaultAsync().get()) {
 }
 
 bool BTAdapter::isThere() {
-	return (bool)adapter && radio && (bool)*radio;
+	return (bool)adapter && radio && (bool)*radio && isOn();
 }
 
 bool BTAdapter::isOn() {

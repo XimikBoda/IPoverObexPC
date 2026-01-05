@@ -59,6 +59,7 @@ void TCPSock::init(PacketMaker* writer, uint16_t type_id, size_t receive_buf) {
 	this->writer = writer;
 	this->type_id = type_id;
 	receive_buf_size = receive_buf;
+	send_buf_a.sdsa_connect(&send_buf);
 }
 
 void TCPSock::connect(std::string addr, uint16_t port) {
@@ -97,7 +98,7 @@ void TCPSock::send(const vec& buf) {
 			if (!connected)
 				break;
 
-			vec buf = send_buf.readAll(DS::NonBlocking);
+			vec buf = send_buf.readAll(DS::Blocking);
 			if (!buf.size())
 				break;
 
@@ -162,6 +163,7 @@ void TCPSock::receive(size_t received) {
 void TCPSock::disconnect() {
 	connected = false;
 	connect_thread_cv.notify_one();
+	send_buf_a.sdsa_close();
 	sock->disconnect();
 }
 
