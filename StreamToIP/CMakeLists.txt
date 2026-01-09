@@ -8,6 +8,8 @@ add_library(${PROJECT_NAME} STATIC
     TCP.cpp TCP.h
     TCPSock.cpp TCPSock.h
     TCPListener.cpp TCPListener.h
+    UDP.cpp UDP.h
+    UDPSock.cpp UDPSock.h
     PacketReader.cpp PacketReader.h
     PacketMaker.cpp PacketMaker.h
 )

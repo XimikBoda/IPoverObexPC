@@ -7,6 +7,7 @@ class PacketMaker : public DS::StreamAgent {
 	friend class StreamToIP;
 	friend class TCPSock;
 	friend class TCPListener;
+	friend class UDPSock;
 
 	std::mutex mutex;
 

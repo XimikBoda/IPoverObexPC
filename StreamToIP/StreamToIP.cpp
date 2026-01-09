@@ -36,6 +36,9 @@ void StreamToIP::parsePacket() {
 	case TCP_LISTENER_T:
 		tcp.parseTCPLPacket();
 		break;
+	case UDP_SOCK_T:
+		udp.parseUDPPacket();
+		break;
 	default:
 		break;
 	}
@@ -53,7 +56,7 @@ void StreamToIP::worker() {
 	writer.sdsa_close();
 }
 
-StreamToIP::StreamToIP() : tcp(*this), log(*this) {}
+StreamToIP::StreamToIP() : tcp(*this), log(*this), udp(*this) {}
 
 void StreamToIP::run() {
 	if (!worker_thr)

@@ -10,6 +10,7 @@ add_library(${PROJECT_NAME} STATIC
     WriterAgent.h WriterAgent.cpp
     Stream.h Stream.cpp
     StreamAgent.h StreamAgent.cpp
+    QueueBlocking.h
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
